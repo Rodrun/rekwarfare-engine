@@ -1,0 +1,18 @@
+# KDevelop4
+rw.kdev4
+*.kdev4
+build/
+# Compiler output
+rekwarfare
+rekwarfare-server
+*.out
+# CMake
+CMakeFiles/
+CMakeCache
+# Eclipse
+.project
+.settings/
+# Gemfile, for gh-pages
+Gemfile
+# Default resource package
+resource/*.zip
