@@ -20,13 +20,20 @@ typedef GLint FilterType;
 #define LINEAR GL_LINEAR
 
 typedef TTF_Font Font;
+/*
+* Short for Texture ID.
+*/
+typedef GLuint Tid;
 
 typedef struct {
     float r;
     float g;
     float b;
     float a;
+    SDL_Color operator()();
 } Color;
+
+extern const Color NO_COLOR;
 
 typedef struct {
     int w;
@@ -37,7 +44,7 @@ void color_increase(float& c, float i);
 void color_decrease(float& c, float d);
 
 typedef struct {
-    GLuint id;
+    Tid id = 0;
     /* Image's width and height */
     unsigned int img_width;
     unsigned int img_height;
@@ -46,28 +53,34 @@ typedef struct {
 } Texture;
 
 /*
-* Modes of rendering. Ordered from fastest to slowest.
+* Modes of (text) rendering. Ordered from fastest to slowest.
 */
-enum Mode { SOLID, SHADED, BLENDED };
-enum TypeText { LATIN1, UTF8, UNICODE, UNICODE_GLYPH };
-
+enum TextRenderMode { SOLID, /*SHADED,*/ BLENDED }; // Omit SHADED!
 /*
-* Holds information on how to render text.
+* Type of text to render.
 */
-typedef struct {
-    Mode mode;
-    TypeText type;
-} TextRender;
+enum TextMode { LATIN1, UTF8 };
 
 /*
 * Load a texture.
-* Texture&: Reference to the texture you want to set.
+* t: Reference to the texture you want to set.
 * min: GL_TEXTURE_MIN_FILTER value. (texture sized down)
 * mag: GL_TEXTURE_MAG_FILTER value. (texture enlarged)
 * returns: true if loading was successful, false otherwise.
 */
-bool loadTexture(Texture&, std::string path, FilterType min=LINEAR,
+bool loadTexture(Texture& t, std::string path, FilterType min=LINEAR,
     FilterType mag=LINEAR);
+bool loadSurface(SDL_Surface*, std::string path);
+/*
+* Load a texture from an SDL_Surface.
+* t: Reference to the texture you want to set.
+* s: SDL_Surface with image information.
+* min: GL_TEXTURE_MIN_FILTER value. (texture sized down)
+* mag: GL_TEXTURE_MAG_FILTER value. (texture enlarged)
+* returns: true if loading was successful, false otherwise.
+*/
+bool loadTextureFromSurface(Texture& t, SDL_Surface* s, FilterType min,
+    FilterType mag);
 void deleteTexture(Texture&);
 /*
 * Load a font.
@@ -120,6 +133,15 @@ void drawRectangle(double x, double y, double w, double h, double rotation,
     Color);
 void drawLine(double x1, double y1, double x2, double y2, double rotation,
     Color);
-void drawText(Font* f, double x, double y, double w, double h, double rotation,
-    Color, TextRender g);
+/*
+* Render a string in either LATIN1 or UTF8 (default UTF8).
+* s: String to render.
+* f: Font.
+* r: Rendering mode, see TextRenderMode for documentation.
+* m: LATIN1 or UTF8.
+*/
+void drawText(std::string s, Font* f, double x, double y, double w, double h,
+        double rotation, Color c, TextRenderMode r, TextMode m=UTF8);
+void drawText_shaded(std::string s, Font* f, double x, double y, double w,
+    double h, double rotation, Color fg, Color bg, TextMode=UTF8);
 }

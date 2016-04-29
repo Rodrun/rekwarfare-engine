@@ -9,7 +9,52 @@
 
 namespace rekwarfare {
 
-GLuint last_tex_id = 0;
+const Color NO_COLOR = { -1, -1, -1, -1 };
+
+namespace {
+    GLuint last_tex_id = 0;
+    /*
+    * Convert a float-based color value to a uint8-based color value.
+    */
+    Uint8 convertColor_uint(float f) {
+        if (f <= 0)
+        return 0;
+        else if (f >= 1)
+        return 255;
+
+        return (Uint8)(255 * f);
+    }
+    /*
+    * Call proper GL functions to load a texture.
+    * id: Texture id to be set.
+    * min: See loadTexture min and mag documentation.
+    */
+    void loadTextureGL(SDL_Surface* surface, Tid& id, FilterType min,
+        FilterType mag) {
+        glGenTextures(1, &id);
+        glBindTexture(GL_TEXTURE_2D, id);
+
+        auto colorfmt = GL_RGB;
+        if (surface->format->BytesPerPixel == 4) {
+            colorfmt = GL_RGBA;
+        }
+
+        glTexImage2D(GL_TEXTURE_2D, 0, colorfmt, surface->w, surface->h, 0,
+            colorfmt, GL_UNSIGNED_BYTE, surface->pixels);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
+
+        SDL_FreeSurface(surface);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+}
+
+SDL_Color Color::operator()() {
+    SDL_Color retc = { convertColor_uint(r), convertColor_uint(g),
+        convertColor_uint(b), convertColor_uint(a) };
+    return retc;
+}
 
 void color_increase(float& c, float i) {
     if (!(i > 1) || !(i < 0))
@@ -30,31 +75,30 @@ void color_decrease(float& c, float d) {
 }
 
 bool loadTexture(Texture& t, std::string path, FilterType min, FilterType mag) {
-    t.surface = IMG_Load(path.c_str());
-    if (t.surface == nullptr) {
-        SDL_LogError(SDL_LOG_CATEGORY_SYSTEM,
-            "Couldn't load %s, reason: %s", path.c_str(), IMG_GetError());
-        return false;
-    }
+    if (!loadSurface(t.surface, path)) return false;
 
     t.img_width = t.surface->w;
     t.img_height = t.surface->h;
 
-    glGenTextures(1, &t.id);
-    glBindTexture(GL_TEXTURE_2D, t.id);
+    loadTextureGL(t.surface, t.id, min, mag);
+    return true;
+}
 
-    auto colorfmt = GL_RGB;
-    if (t.surface->format->BytesPerPixel == 4) {
-        colorfmt = GL_RGBA;
+bool loadSurface(SDL_Surface* s, std::string path) {
+    s = IMG_Load(path.c_str());
+    if (s == nullptr) {
+        SDL_LogError(SDL_LOG_CATEGORY_SYSTEM,
+            "Couldn't load %s, reason: %s", path.c_str(), IMG_GetError());
+        return false;
     }
+    return true;
+}
 
-    glTexImage2D(GL_TEXTURE_2D, 0, colorfmt, t.surface->w, t.surface->h, 0,
-        colorfmt, GL_UNSIGNED_BYTE, t.surface->pixels);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
-
-    SDL_FreeSurface(t.surface);
-    glBindTexture(GL_TEXTURE_2D, 0);
+bool loadTextureFromSurface(Texture& t, SDL_Surface* s, FilterType min,
+    FilterType mag) {
+    if (s == nullptr)
+        return false;
+    loadTextureGL(s, t.id, min, mag);
     return true;
 }
 
@@ -185,22 +229,32 @@ void drawLine(double x1, double y1, double x2, double y2, double rotation,
     glPopMatrix();
 }
 
-void drawText(Font* f, double x, double y, double w, double h, double rotation,
-    Color, TypeText g) {
-    switch (g.type) {
-        case LATIN1:
-
+void drawText(std::string s, Font* f, double x, double y, double w, double h,
+    double rotation, Color c, TextRenderMode r, TextMode m) {
+    SDL_Surface* sf = nullptr;
+    switch (r) {
+        case SOLID:
+            if (m == UTF8)
+                sf = TTF_RenderUTF8_Solid(f, s.c_str(), c());
+            else
+                sf = TTF_RenderText_Solid(f, s.c_str(), c());
             break;
-        case UTF8:
-
-            break;
-        case UNICODE:
-
-            break;
-        case UNICODE_GLYPH:
-
+        case BLENDED:
+            if (m == UTF8)
+                sf = TTF_RenderUTF8_Blended(f, s.c_str(), c());
+                else
+                sf = TTF_RenderText_Blended(f, s.c_str(), c());
             break;
     }
+}
+
+void drawText_shaded(std::string s, Font* f, double x, double y, double w,
+    double h, double rotation, Color fg, Color bg, TextMode m) {
+    SDL_Surface* sf = nullptr;
+    if (m == UTF8)
+        sf = TTF_RenderUTF8_Shaded(f, s.c_str(), fg(), bg());
+    else
+        sf = TTF_RenderText_Shaded(f, s.c_str(), fg(), bg());
 }
 
 }
