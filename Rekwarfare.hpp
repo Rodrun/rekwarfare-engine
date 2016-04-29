@@ -9,7 +9,6 @@
 #include "net/Protocol.hpp"
 #include "net/Server.hpp"
 #include "net/Socket.hpp"
-#include "util/Configuration.hpp"
 #include "util/FPSCounter.hpp"
 #include "util/UFile.h"
 #include "util/Ujson.h"
