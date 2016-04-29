@@ -18,10 +18,9 @@ namespace {
     */
     Uint8 convertColor_uint(float f) {
         if (f <= 0)
-        return 0;
+            return 0;
         else if (f >= 1)
-        return 255;
-
+            return 255;
         return (Uint8)(255 * f);
     }
     /*
@@ -84,7 +83,7 @@ bool loadTexture(Texture& t, std::string path, FilterType min, FilterType mag) {
     return true;
 }
 
-bool loadSurface(SDL_Surface* s, std::string path) {
+bool loadSurface(SDL_Surface*& s, std::string path) {
     s = IMG_Load(path.c_str());
     if (s == nullptr) {
         SDL_LogError(SDL_LOG_CATEGORY_SYSTEM,

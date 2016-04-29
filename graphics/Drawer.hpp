@@ -70,7 +70,7 @@ enum TextMode { LATIN1, UTF8 };
 */
 bool loadTexture(Texture& t, std::string path, FilterType min=LINEAR,
     FilterType mag=LINEAR);
-bool loadSurface(SDL_Surface*, std::string path);
+bool loadSurface(SDL_Surface*&, std::string path);
 /*
 * Load a texture from an SDL_Surface.
 * t: Reference to the texture you want to set.

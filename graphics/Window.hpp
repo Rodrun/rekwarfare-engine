@@ -65,6 +65,7 @@ public:
     bool isFullscreen() const { return m_fullscreen; }
     std::string getTitle() const { return m_title; }
     SDL_Window* getWindow() const { return m_win; }
+    SDL_Event e; // wontfix name
 
 private:
     /*
@@ -95,7 +96,6 @@ private:
     bool m_fullscreen;
     SDL_Window* m_win = nullptr;
     SDL_GLContext m_glcontext;
-    SDL_Event e; // wontfix
 };
 
 }
