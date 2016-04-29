@@ -15,9 +15,6 @@
 * The window, if not fullscreen, by default is not resizable, use
 *  setResizable().
 */
-
-#include "Configuration.hpp"
-
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_opengl.h"
 
@@ -34,6 +31,8 @@
 #ifndef REKWARFARE_IMG_INIT_FLAGS
 #   define REKWARFARE_IMG_INIT_FLAGS IMG_INIT_PNG
 #endif
+
+#define REKWARFARE_WINDOWPOS_UNDEF SDL_WINDOWPOS_UNDEFINED
 
 namespace rekwarfare {
 
