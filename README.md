@@ -27,3 +27,23 @@ do the following:
 [SDL2_ttf](http://www.libsdl.org/projects/SDL_ttf/)
 
 [SDL2_mixer](http://www.libsdl.org/projects/SDL_mixer/)
+
+# Building
+
+Building is pretty simple, feel free to modify the CMakeLists.txt to fit your needs.
+
+I currently only know how to build on GNU/Linux systems...
+
+## Linux
+
+Pretty simple, just clone repository, have a separate directory to have build files, then build from that directory.
+
+So following the instructions, you should do something like this:
+
+```
+ $ git clone .../rekwarfare-engine.git
+$ mkdir build
+$ cd build
+$ cmake <wherever rekwarfare-engine repository is>
+$ make
+```
