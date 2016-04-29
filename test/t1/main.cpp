@@ -15,6 +15,7 @@ int main() {
     }
 
     while (window.isRunning()) {
+        window.pollEvents();
         window.clear();
 
         drawTexture(t, 0, 0, window.getWidth(), window.getHeight(), 0, NO_COLOR);

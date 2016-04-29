@@ -2,9 +2,6 @@
 rw.kdev4
 *.kdev4
 build/
-# Compiler output
-rekwarfare
-rekwarfare-server
 *.out
 # CMake
 CMakeFiles/
