@@ -1,5 +1,7 @@
 # Rekwarfare engine
 
+(I like to call it the RW Engine)
+
 A 2D game engine that utilizes SDL2 and OpenGL.
 
 ## What is it for?
@@ -14,7 +16,7 @@ do the following:
 * Handle SDL Windows
 * Render textures
 * Play audio
-* Run a server
+* Run a server (to be rewritten soon!)
 
 # Dependencies
 
@@ -41,9 +43,25 @@ Pretty simple, just clone repository, have a separate directory to have build fi
 So following the instructions, you should do something like this:
 
 ```
- $ git clone .../rekwarfare-engine.git
+$ git clone https://github.com/rodrun/rekwarfare-engine.git
 $ mkdir build
 $ cd build
 $ cmake <wherever rekwarfare-engine repository is>
 $ make
 ```
+
+# Starting off
+
+I try my best to make the engine very simple to use. To get a window started up and running you can do the following:
+
+```
+Window window("Yay a window!", REKWARFARE_WINDOWPOS_UNDEF, REKWARFARE_WINDOWPOS_UNDEF, 800, 400);
+while (window.isRunning()) {
+    window.pollEvents();
+    window.clear();
+    // Do some stuff here
+    window.update();
+}
+```
+
+Please see the documentation for more. (to be written soon!)
