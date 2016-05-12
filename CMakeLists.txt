@@ -47,15 +47,14 @@ target_link_libraries(rekwarfare-engine
 )
 
 # TEST(S)
-    add_executable(t1 test/t1/main.cpp)
-    target_link_libraries(t1
-        ${SDL2_LIBRARIES}
-        ${OPENGL_gl_LIBRARY}
-        ${SDLIMAGE_LIBRARY}
-        ${SDLMIXER_LIBRARY}
-        ${SDLTTF_LIBRARY}
-        rekwarfare-engine
-    )
 if(RWENGINE_ALLOW_TESTS)
-
+add_executable(t1 test/t1/main.cpp)
+    target_link_libraries(t1
+    ${SDL2_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
+    ${SDLIMAGE_LIBRARY}
+    ${SDLMIXER_LIBRARY}
+    ${SDLTTF_LIBRARY}
+    rekwarfare-engine
+)
 endif(RWENGINE_ALLOW_TESTS)
