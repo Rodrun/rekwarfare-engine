@@ -9,10 +9,12 @@
 
 namespace rekwarfare {
 
+const GLint NEAREST = GL_NEAREST;
+const GLint LINEAR = GL_LINEAR;
 const Color NO_COLOR = { -1, -1, -1, -1 };
 
 namespace {
-    GLuint last_tex_id = 0;
+    GLuint last_tex_id = -1;
     /*
     * Convert a float-based color value to a uint8-based color value.
     */
@@ -43,10 +45,20 @@ namespace {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
 
-        SDL_FreeSurface(surface);
+//        SDL_FreeSurface(surface);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
-
+    /*
+    * Load a texture from given surface, which should contain TTF information,
+    *  and then render the string.
+    */
+    void loadAndRenderText(SDL_Surface* sf, double x, double y, double w,
+        double h, double rotation, Color c, FilterType min, FilterType mag) {
+        Texture t;
+        if (loadTextureFromSurface(t, sf, min, mag)) {
+            drawTexture(t, x, y, w, h, rotation, c);
+        }
+    }
 }
 
 SDL_Color Color::operator()() {
@@ -103,6 +115,7 @@ bool loadTextureFromSurface(Texture& t, SDL_Surface* s, FilterType min,
 
 void deleteTexture(Texture& t) {
     glDeleteTextures(1, &t.id);
+    SDL_FreeSurface(t.surface);
 }
 
 Font* loadFont(std::string path, int ptsize, long index) {
@@ -138,7 +151,7 @@ Dimension2i getSizeOfString(Font* f, std::string s) {
     }
     return d;
 }
-
+// TODO: Implement vertex arrays to use over immediate mode
 void drawTexture(Texture t, double x, double y, double w, double h,
     unsigned int tx, unsigned int ty, unsigned int tw, unsigned int th,
     double rotation, Color c) {
@@ -229,7 +242,8 @@ void drawLine(double x1, double y1, double x2, double y2, double rotation,
 }
 
 void drawText(std::string s, Font* f, double x, double y, double w, double h,
-    double rotation, Color c, TextRenderMode r, TextMode m) {
+    double rotation, Color c, TextRenderMode r, TextMode m, FilterType min,
+    FilterType mag) {
     SDL_Surface* sf = nullptr;
     switch (r) {
         case SOLID:
@@ -245,15 +259,20 @@ void drawText(std::string s, Font* f, double x, double y, double w, double h,
                 sf = TTF_RenderText_Blended(f, s.c_str(), c());
             break;
     }
+    loadAndRenderText(sf, x, y, w, h, rotation, c, min, mag);
+    SDL_FreeSurface(sf);
 }
 
 void drawText_shaded(std::string s, Font* f, double x, double y, double w,
-    double h, double rotation, Color fg, Color bg, TextMode m) {
+    double h, double rotation, Color fg, Color bg, TextMode m, FilterType min,
+    FilterType mag) {
     SDL_Surface* sf = nullptr;
     if (m == UTF8)
         sf = TTF_RenderUTF8_Shaded(f, s.c_str(), fg(), bg());
     else
         sf = TTF_RenderText_Shaded(f, s.c_str(), fg(), bg());
+
+    loadAndRenderText(sf, x, y, w, h, rotation, NO_COLOR, min, mag);
 }
 
 }

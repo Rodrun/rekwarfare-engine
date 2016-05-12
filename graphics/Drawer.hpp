@@ -6,6 +6,15 @@
 
 #include <string>
 
+// Some macros...
+/*
+* Define if vertex arrays are preferred over immediate mode rendering.
+* Vertex arrays usually improve performance.
+*/
+#ifndef REKWARFARE_USE_VERTARRAYS
+#   define REKWARFARE_USE_VERTARRAYS
+#endif
+
 namespace rekwarfare {
 
 /*
@@ -13,11 +22,10 @@ namespace rekwarfare {
 *  to be filtered. NEAREST results in a more pixelated-look, LINEAR gives a
 *  blurrier, but non-pixelated look. (NEAREST would be best choice for
 *  8-bit-like graphics)
-* ... Yes, I'm using macros to define them...
 */
 typedef GLint FilterType;
-#define NEAREST GL_NEAREST
-#define LINEAR GL_LINEAR
+extern const GLint NEAREST;
+extern const GLint LINEAR;
 
 typedef TTF_Font Font;
 /*
@@ -30,6 +38,9 @@ typedef struct {
     float g;
     float b;
     float a;
+    /*
+    * If a SDL_Color is wanted, simply call this operator.
+    */
     SDL_Color operator()();
 } Color;
 
@@ -40,7 +51,13 @@ typedef struct {
     int h;
 } Dimension2i;
 
+/*
+* Increase the color value, recommended use.
+*/
 void color_increase(float& c, float i);
+/*
+* Decrease the color value, recommended use.
+*/
 void color_decrease(float& c, float d);
 
 typedef struct {
@@ -79,8 +96,8 @@ bool loadSurface(SDL_Surface*&, std::string path);
 * mag: GL_TEXTURE_MAG_FILTER value. (texture enlarged)
 * returns: true if loading was successful, false otherwise.
 */
-bool loadTextureFromSurface(Texture& t, SDL_Surface* s, FilterType min,
-    FilterType mag);
+bool loadTextureFromSurface(Texture& t, SDL_Surface* s, FilterType min=LINEAR,
+    FilterType mag=LINEAR);
 void deleteTexture(Texture&);
 /*
 * Load a font.
@@ -109,16 +126,12 @@ int getFontDescent(const Font*);
 Dimension2i getSizeOfString(Font* f, std::string s);
 /*
 * Draw a section of a texture.
-* NOTE: unless multiplybydim = false, will multiply tx/ty * tw/th to get
-*  coordinates
 * NOTE: To use original texture color, assign one(or more)of Color's members
 *  to -1.
 * tx/ty: Tile x/y
 * tw/th: Tile width/height
-* multiplybydim: Weather to multiply tx or ty by tw or th. Set to false if
-*  specific tile coordinates are desired rather than the use of 1,2,3,4, etc...
 */
-void drawTexture(Texture, double x, double y, /* uint? */ double w, double h,
+void drawTexture(Texture, double x, double y, double w, double h,
     unsigned int tx, unsigned int ty, unsigned int tw, unsigned int th,
     double rotation, Color);
 /*
@@ -139,9 +152,13 @@ void drawLine(double x1, double y1, double x2, double y2, double rotation,
 * f: Font.
 * r: Rendering mode, see TextRenderMode for documentation.
 * m: LATIN1 or UTF8.
+* min: Filter, see FilterType.
+* mag: Filter, see FilterType.
 */
 void drawText(std::string s, Font* f, double x, double y, double w, double h,
-        double rotation, Color c, TextRenderMode r, TextMode m=UTF8);
+    double rotation, Color c, TextRenderMode r, TextMode m=UTF8,
+    FilterType min=LINEAR, FilterType mag=LINEAR);
 void drawText_shaded(std::string s, Font* f, double x, double y, double w,
-    double h, double rotation, Color fg, Color bg, TextMode=UTF8);
+    double h, double rotation, Color fg, Color bg, TextMode=UTF8,
+    FilterType min=LINEAR, FilterType mag=LINEAR);
 }
