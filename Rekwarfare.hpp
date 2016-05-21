@@ -1,5 +1,4 @@
-#ifndef REKWARFARE_H
-#define REKWARFARE_H
+#pragma once
 
 #include "audio/SoundPlayer.hpp"
 #include "graphics/Window.hpp"
@@ -13,5 +12,3 @@
 #include "util/UFile.h"
 #include "util/Ujson.h"
 #include "util/Ustring.h"
-
-#endif /* REKWARFARE_H */
