@@ -6,6 +6,7 @@
 #include "SDL2/SDL_ttf.h"
 
 #include <string>
+#include <vector>
 
 namespace rekwarfare {
 
@@ -14,7 +15,7 @@ const GLint LINEAR = GL_LINEAR;
 const Color NO_COLOR = { -1, -1, -1, -1 };
 
 namespace {
-    GLuint last_tex_id = -1;
+    Tid last_tex_id = -1;
     /*
     * Convert a float-based color value to a uint8-based color value.
     */
@@ -168,6 +169,7 @@ void drawTexture(Texture t, double x, double y, double w, double h,
         glTranslated(-(x + w / 2), -(y + h / 2), 0);
     }
 
+    #ifdef REKWARFARE_USE_IMMEDIATEMODE
     float left = (float) tx / (float) t.img_height;
     float right = ((float) tx + (float) tw) / (float) t.img_width;
     float top = (float) ty / (float) t.img_height;
@@ -190,6 +192,9 @@ void drawTexture(Texture t, double x, double y, double w, double h,
         glTexCoord2f(left, bottom);
         glVertex2d(x, y + h);
     glEnd();
+    #else
+
+    #endif
     glPopMatrix();
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -209,6 +214,7 @@ void drawRectangle(double x, double y, double w, double h, double rotation,
         glRotated(rotation, 0, 0, 1);
         glTranslated(-(x + w / 2), -(y + h / 2), 0);
     }
+    #ifndef REKWARFARE_USE_VERTARRAYS
 
     glBegin(GL_TRIANGLES);
         glColor4f(c.r, c.g, c.b, c.a);
@@ -220,6 +226,36 @@ void drawRectangle(double x, double y, double w, double h, double rotation,
         glVertex2d(x, y + h);
         glVertex2d(x, y);
     glEnd();
+    #else
+    const GLdouble vertices[12] = {
+        // Bottom left
+        x, y,
+        x, y + h,
+        x + w, y + h,
+        // Top right
+        x + w, y + h,
+        x + w, y,
+        x, y
+    };
+    std::vector<float> colors;
+    // 12 * 4 = vertices length * 4 (rgba)
+    for (auto i = 0; i < (12 * 4); i++) {
+        colors.push_back(c.r);
+        colors.push_back(c.g);
+        colors.push_back(c.b);
+        colors.push_back(c.a);
+    }
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    glVertexPointer(2, GL_DOUBLE, 0, vertices);
+    glColorPointer(4, GL_FLOAT, 0, colors.data());
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    #endif
     glPopMatrix();
 }
 

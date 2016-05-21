@@ -8,10 +8,11 @@
 
 // Some macros...
 /*
-* Define if vertex arrays are preferred over immediate mode rendering.
+* Define REKWARFARE_USE_IMMEDIATEMODE if immediate mode is preferred over Vertex
+*  arrays.
 * Vertex arrays usually improve performance.
 */
-#ifndef REKWARFARE_USE_VERTARRAYS
+#ifndef REKWARFARE_USE_IMMEDIATEMODE
 #   define REKWARFARE_USE_VERTARRAYS
 #endif
 
@@ -38,9 +39,6 @@ typedef struct {
     float g;
     float b;
     float a;
-    /*
-    * If a SDL_Color is wanted, simply call this operator.
-    */
     SDL_Color operator()();
 } Color;
 
