@@ -187,6 +187,5 @@ FilterType getDefaultMinFilterType();
 FilterType getDefaultMagFilterType();
 void setRenderingMode(RenderingMode);
 RenderingMode getRenderingMode();
-void setBackgroundColor(Color);
 
 }

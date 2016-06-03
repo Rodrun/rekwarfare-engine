@@ -410,8 +410,4 @@ FilterType getDefaultMagFilterType() {
     return default_filter_mag;
 }
 
-void setBackgroundColor(Color c) {
-    glClearColor(c.r, c.b, c.b, c.a);
-}
-
 }
