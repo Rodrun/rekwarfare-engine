@@ -1,3 +1,7 @@
+/*
+* Collection of datatypes and functions that modify the screen (e.g. render
+*  primitive types, render textures, load textures, render text)
+*/
 #pragma once
 
 #include "SDL2/SDL.h"
@@ -6,27 +10,39 @@
 
 #include <string>
 
-// Some macros...
-/*
-* Define REKWARFARE_USE_IMMEDIATEMODE if immediate mode is preferred over Vertex
-*  arrays.
-* Vertex arrays usually improve performance.
-*/
-#ifndef REKWARFARE_USE_IMMEDIATEMODE
-#   define REKWARFARE_USE_VERTARRAYS
-#endif
-
 namespace rekwarfare {
-
 /*
 * The filter type tells loadTexture() how you want the texture you are loading
 *  to be filtered. NEAREST results in a more pixelated-look, LINEAR gives a
 *  blurrier, but non-pixelated look. (NEAREST would be best choice for
-*  8-bit-like graphics)
+*  8-bit-like graphics).
+* If OpenGL 3+ is enabled, then you have the choice to use mipmaps.
+* NOTE: that the min filter is to have the desired mipmap filter, not the mag.
 */
 typedef GLint FilterType;
-extern const GLint NEAREST;
-extern const GLint LINEAR;
+extern const FilterType NEAREST;
+extern const FilterType LINEAR;
+// Mipmaps are supported in OpenGL versions 3.0+
+/* Equivalent to GL_LINEAR_MIPMAP_NEAREST. */
+extern const FilterType MIPMAP_LINEAR_NEAREST;
+/* Equivalent to GL_NEAREST_MIPMAP_NEAREST. */
+extern const FilterType MIPMAP_NEAREST_NEAREST;
+/* Equivalent to GL_NEAREST_MIPMAP_LINEAR. */
+extern const FilterType MIPMAP_NEAREST_LINEAR;
+/* Equivalent to GL_LINEAR_MIPMAP_LINEAR. */
+extern const FilterType MIPMAP_LINEAR_LINEAR;
+
+typedef GLint WrapMode;
+/* Equivalent to GL_REPEAT. */
+extern const WrapMode REPEAT;
+/* Equivalent to GL_MIRRORED_REPEAT. */
+extern const WrapMode MIRROR_REPEAT;
+/* Equivalent to GL_CLAMP_TO_EDGE. */
+extern const WrapMode CLAMP_EDGE;
+/* Equivalent to GL_CLAMP_TO_BORDER. */
+extern const WrapMode CLAMP_BORDER;
+
+enum RenderingMode { VERTEX_ARRAY, IMMEDIATE_MODE };
 
 typedef TTF_Font Font;
 /*
@@ -155,8 +171,22 @@ void drawLine(double x1, double y1, double x2, double y2, double rotation,
 */
 void drawText(std::string s, Font* f, double x, double y, double w, double h,
     double rotation, Color c, TextRenderMode r, TextMode m=UTF8,
-    FilterType min=LINEAR, FilterType mag=LINEAR);
+    FilterType min=-1, FilterType mag=-1);
 void drawText_shaded(std::string s, Font* f, double x, double y, double w,
     double h, double rotation, Color fg, Color bg, TextMode=UTF8,
-    FilterType min=LINEAR, FilterType mag=LINEAR);
+    FilterType min=-1, FilterType mag=-1);
+/*
+* Set the default wrapping mode. This is used when UV coordinates for textures
+*  are out of range.
+*/
+void setWrappingMode(WrapMode);
+void setDefaultMinFilterType(FilterType);
+void setDefaultMagFilterType(FilterType);
+WrapMode getWrappingMode();
+FilterType getDefaultMinFilterType();
+FilterType getDefaultMagFilterType();
+void setRenderingMode(RenderingMode);
+RenderingMode getRenderingMode();
+void setBackgroundColor(Color);
+
 }

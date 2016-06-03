@@ -13,9 +13,26 @@ namespace rekwarfare {
 const GLint NEAREST = GL_NEAREST;
 const GLint LINEAR = GL_LINEAR;
 const Color NO_COLOR = { -1, -1, -1, -1 };
+const WrapMode REPEAT = GL_REPEAT;
+const WrapMode MIRROR_REPEAT = GL_MIRRORED_REPEAT;
+const WrapMode CLAMP_EDGE = GL_CLAMP_TO_EDGE;
+const WrapMode CLAMP_BORDER = GL_CLAMP_TO_BORDER;
+const FilterType MIPMAP_LINEAR_NEAREST = GL_LINEAR_MIPMAP_NEAREST;
+const FilterType MIPMAP_NEAREST_NEAREST = GL_NEAREST_MIPMAP_NEAREST;
+const FilterType MIPMAP_NEAREST_LINEAR = GL_NEAREST_MIPMAP_LINEAR;
+const FilterType MIPMAP_LINEAR_LINEAR = GL_LINEAR_MIPMAP_LINEAR;
 
 namespace {
+    RenderingMode rendering_mode = VERTEX_ARRAY;
     Tid last_tex_id = -1;
+    /* The default wrap mode, can be changed with setWrappingMode(). */
+    WrapMode wrap_mode = REPEAT;
+    /*
+    * Default min and mag filters. Separate due to the fact that min filter
+    *  should be the only one with a mipmap filter value.
+    */
+    FilterType default_filter_min = NEAREST;
+    FilterType default_filter_mag = NEAREST;
     /*
     * Convert a float-based color value to a uint8-based color value.
     */
@@ -25,6 +42,35 @@ namespace {
         else if (f >= 1)
             return 255;
         return (Uint8)(255 * f);
+    }
+    /*
+    * Validate a mag filter. Will make sure the filter is either NEAREST
+    *  or LINEAR.
+    */
+    FilterType validateMagFilter(FilterType t) {
+        if (t != NEAREST || t != LINEAR) {
+            if (t == MIPMAP_LINEAR_LINEAR || t == MIPMAP_LINEAR_NEAREST)
+            return LINEAR;
+            else
+            return NEAREST;
+        }
+        return t;
+    }
+    /*
+    * Validate a min filter. Will make sure the filter is supported.
+    */
+    FilterType validateMinFilter(FilterType t) {
+        int version;
+        // Check if context is OpenGL 3.0 or higher
+        SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &version);
+        if (version <= 3 && (t != LINEAR || t != NEAREST)) {
+            // Mipmaps aren't supported in versions before 3.0
+            if (t == MIPMAP_LINEAR_LINEAR || t == MIPMAP_LINEAR_NEAREST)
+            return LINEAR;
+            else
+            return NEAREST;
+        }
+        return t;
     }
     /*
     * Call proper GL functions to load a texture.
@@ -43,10 +89,20 @@ namespace {
 
         glTexImage2D(GL_TEXTURE_2D, 0, colorfmt, surface->w, surface->h, 0,
             colorfmt, GL_UNSIGNED_BYTE, surface->pixels);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
 
-//        SDL_FreeSurface(surface);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);
+        // Make sure filters cope well with OpenGL context
+        FilterType vmin = validateMinFilter(min);
+        FilterType vmag = validateMagFilter(mag);
+        if (min == -1)
+            vmin = default_filter_min;
+        if (mag == -1)
+            vmag = default_filter_mag;
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, vmin);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, vmag);
+
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     /*
@@ -152,16 +208,10 @@ Dimension2i getSizeOfString(Font* f, std::string s) {
     }
     return d;
 }
-// TODO: Implement vertex arrays to use over immediate mode
+
 void drawTexture(Texture t, double x, double y, double w, double h,
     unsigned int tx, unsigned int ty, unsigned int tw, unsigned int th,
     double rotation, Color c) {
-    if (t.id != last_tex_id) { // to minimalize gl calls as much as possible
-        glBindTexture(GL_TEXTURE_2D, t.id);
-    } else {
-        last_tex_id = t.id;
-    }
-
     glPushMatrix();
     if (rotation != 0){
         glTranslated(x + w / 2, y + h / 2, 0);
@@ -169,7 +219,6 @@ void drawTexture(Texture t, double x, double y, double w, double h,
         glTranslated(-(x + w / 2), -(y + h / 2), 0);
     }
 
-    #ifdef REKWARFARE_USE_IMMEDIATEMODE
     float left = (float) tx / (float) t.img_height;
     float right = ((float) tx + (float) tw) / (float) t.img_width;
     float top = (float) ty / (float) t.img_height;
@@ -180,24 +229,39 @@ void drawTexture(Texture t, double x, double y, double w, double h,
     if (top > 1)     top     = 1; if (top < 0)      top = 0;
     if (bottom > 1)  bottom  = 1; if (bottom < 0)   bottom = 0;
 
-    glBegin(GL_QUADS);
-        if (!(c.r < 0 || c.g < 0 || c.b < 0 || c.a < 0))
-            glColor4f(c.r, c.g, c.b, c.a);
-        glTexCoord2f(left, top);
-        glVertex2d(x, y);
-        glTexCoord2f(right, top);
-        glVertex2d(x + w, y);
-        glTexCoord2f(right, bottom);
-        glVertex2d(x + w, y + h);
-        glTexCoord2f(left, bottom);
-        glVertex2d(x, y + h);
-    glEnd();
-    #else
+    glBindTexture(GL_TEXTURE_2D, t.id);
 
-    #endif
-    glPopMatrix();
+    if (rendering_mode == IMMEDIATE_MODE) {
+        glBegin(GL_QUADS);
+            if (!(c.r < 0 || c.g < 0 || c.b < 0 || c.a < 0))
+                glColor4f(c.r, c.g, c.b, c.a);
+            glTexCoord2f(left, top);
+            glVertex2d(x, y);
+            glTexCoord2f(right, top);
+            glVertex2d(x + w, y);
+            glTexCoord2f(right, bottom);
+            glVertex2d(x + w, y + h);
+            glTexCoord2f(left, bottom);
+            glVertex2d(x, y + h);
+        glEnd();
+    } else if (rendering_mode == VERTEX_ARRAY) {
+        const GLfloat UV[8] = {
+            // Counter clock-wise
+            // 0, 0, is the lower left, 1, 1 is top right
+            left, bottom, // Lower Left
+            right, bottom, // Lower right
+            right, top, // Top Right
+            left, top // Top Left
+        };
+
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glClientActiveTexture(GL_TEXTURE_2D);
+        glTexCoordPointer(2, GL_DOUBLE, 0, &UV);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
 
     glBindTexture(GL_TEXTURE_2D, 0);
+    glPopMatrix();
 }
 
 void drawTexture(Texture t, double x, double y, double w, double h,
@@ -214,48 +278,44 @@ void drawRectangle(double x, double y, double w, double h, double rotation,
         glRotated(rotation, 0, 0, 1);
         glTranslated(-(x + w / 2), -(y + h / 2), 0);
     }
-    #ifndef REKWARFARE_USE_VERTARRAYS
+    if (rendering_mode == IMMEDIATE_MODE) {
+        glBegin(GL_TRIANGLES);
+            glColor4f(c.r, c.g, c.b, c.a);
+            glVertex2d(x, y);
+            glVertex2d(x + w, y);
+            glVertex2d(x + w, y + h);
 
-    glBegin(GL_TRIANGLES);
-        glColor4f(c.r, c.g, c.b, c.a);
-        glVertex2d(x, y);
-        glVertex2d(x + w, y);
-        glVertex2d(x + w, y + h);
+            glVertex2d(x + w, y + h);
+            glVertex2d(x, y + h);
+            glVertex2d(x, y);
+        glEnd();
+    } else if (rendering_mode == VERTEX_ARRAY) {
+        const GLdouble vertices[12] = {
+            // Bottom left
+            x, y,
+            x, y + h,
+            x + w, y + h,
+            // Top right
+            x + w, y + h,
+            x + w, y,
+            x, y
+        };
+        float colors[] = {
+            c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a,
+            c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a,
+            c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a,
+        };
 
-        glVertex2d(x + w, y + h);
-        glVertex2d(x, y + h);
-        glVertex2d(x, y);
-    glEnd();
-    #else
-    const GLdouble vertices[12] = {
-        // Bottom left
-        x, y,
-        x, y + h,
-        x + w, y + h,
-        // Top right
-        x + w, y + h,
-        x + w, y,
-        x, y
-    };
-    std::vector<float> colors;
-    // 12 * 4 = vertices length * 4 (rgba)
-    for (auto i = 0; i < (12 * 4); i++) {
-        colors.push_back(c.r);
-        colors.push_back(c.g);
-        colors.push_back(c.b);
-        colors.push_back(c.a);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        glVertexPointer(2, GL_DOUBLE, 0, vertices);
+        glColorPointer(4, GL_FLOAT, 0, colors);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
     }
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-
-    glVertexPointer(2, GL_DOUBLE, 0, vertices);
-    glColorPointer(4, GL_FLOAT, 0, colors.data());
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    #endif
     glPopMatrix();
 }
 
@@ -269,12 +329,27 @@ void drawLine(double x1, double y1, double x2, double y2, double rotation,
         glTranslated(-(x1 + x2 / 2), -(y1 + y2 / 2), 0);
     }
 
-    glBegin(GL_LINES);
-        glColor4f(c.r, c.g, c.b, c.a);
-        glVertex2d(x1, y1);
-        glVertex2d(x2, y2);
-    glEnd();
-    glPopMatrix();
+    if (rendering_mode == IMMEDIATE_MODE) {
+        glBegin(GL_LINES);
+            glColor4f(c.r, c.g, c.b, c.a);
+            glVertex2d(x1, y1);
+            glVertex2d(x2, y2);
+        glEnd();
+        glPopMatrix();
+    } else if (rendering_mode == VERTEX_ARRAY) {
+        const float colors[] = { c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a };
+        const double verts[4] = { x1, y1, x2, y2 };
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        glVertexPointer(2, GL_DOUBLE, 0, verts);
+        glColorPointer(4, GL_FLOAT, 0, colors);
+        glDrawArrays(GL_LINES, 0, 2);
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
 }
 
 void drawText(std::string s, Font* f, double x, double y, double w, double h,
@@ -309,6 +384,34 @@ void drawText_shaded(std::string s, Font* f, double x, double y, double w,
         sf = TTF_RenderText_Shaded(f, s.c_str(), fg(), bg());
 
     loadAndRenderText(sf, x, y, w, h, rotation, NO_COLOR, min, mag);
+}
+
+void setWrappingMode(WrapMode m) {
+    wrap_mode = m;
+}
+
+void setDefaultMinFilterType(FilterType t) {
+    default_filter_min = validateMinFilter(t);
+}
+
+void setDefaultMagFilterType(FilterType t) {
+    default_filter_mag = validateMagFilter(t);
+}
+
+WrapMode getWrappingMode() {
+    return wrap_mode;
+}
+
+FilterType getDefaultMinFilterType() {
+    return default_filter_min;
+}
+
+FilterType getDefaultMagFilterType() {
+    return default_filter_mag;
+}
+
+void setBackgroundColor(Color c) {
+    glClearColor(c.r, c.b, c.b, c.a);
 }
 
 }
