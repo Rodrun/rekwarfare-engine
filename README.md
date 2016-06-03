@@ -76,7 +76,3 @@ while (window.isRunning()) {
 **Remember** that everything is within the namespace 'rekwarfare'.
 
 Please see the documentation for more. (to be written soon!)
-
-**Possible things to keep in mind:**
-
-I *believe* that, due to the way I've created the 'Window' class so far, you may only be allowed to use one window, and only one. This is because the window calls the necessary functions to initialize SDL and other things. This may change soon.
