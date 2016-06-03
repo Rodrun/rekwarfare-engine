@@ -4,7 +4,9 @@
 using namespace rekwarfare;
 
 int main() {
+    initializeSDL(INIT_EVERYTHING, IMG_PNG, MIX_MP3);
     Window window("t1", WINDOWPOS_UNDEF, WINDOWPOS_UNDEF, 800, 640);
+    initializeOpenGL(2, 1, window());
 
     Texture t;
     bool loaded = loadTexture(t, "test/resource/t1.png");
@@ -21,7 +23,7 @@ int main() {
 
     float rotation = 0;
     Color c = { 1, 0, 0, 1 };
-    Color bg = { .5, .5, .25, 1 };
+    Color bg = { 0, 1, 0, 1 };
 
     while (window.isRunning()) {
         while (window.getEventPollingState() != 0) {
@@ -33,11 +35,10 @@ int main() {
         else
             rotation++;
 
-        setBackgroundColor(bg);
         window.clear();
 
         drawRectangle(0, 0, 250, 250, rotation, c);
-        drawRectangle(400, 150, 100, 200, -rotation, c);
+        drawRectangle(400, 150, 100, 200, -rotation, bg);
         drawLine(125, 125, 425, 150, 0, bg);
         drawTexture(t, 0, 0, window.getWidth(), window.getHeight(), 0, NO_COLOR);
         drawText("RW Engine", f, 0, window.getHeight() - 200, 800 / 3, 200,

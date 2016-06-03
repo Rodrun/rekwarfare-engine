@@ -21,6 +21,7 @@ add_definitions("-std=c++11 -g -Wall -pedantic-errors -Wextra")
 
 # Client
 add_library(rekwarfare-engine
+    system/System.cpp
     lib/json11/json11.cpp
     util/UFile.cpp
     util/Ujson.cpp

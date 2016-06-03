@@ -1,8 +1,6 @@
 #pragma once
 /*
 * Handles audio-related functions.
-* Call initSDLMixer() before using anything.
-* Call
 */
 
 #include "SDL2/SDL_mixer.h"
@@ -68,12 +66,6 @@ int playSoundFadeIn(int channel, Sound*, int loops, int ms, int ticks=-1);
 */
 void setSoundVolume(Sound*, unsigned int);
 /*
-* Equivalent of Mix_Init(flags),
-* but:
-* returns: true on success, false on failure.
-*/
-bool initSDLMixer(int flags);
-/*
 * Initialize SDL_Mixer API. Call endAudioFormat() when
 *  no more loading/playing functions with the given
 *  format are needed (i.e. before termination).
@@ -91,9 +83,5 @@ void endAudioFormat();
 * returns: 0 on error.
 */
 int getCurrentAudioFormat(AudioFormat&);
-/*
-* Equivalent of Mix_Quit().
-*/
-void closeSDLMixer();
 
 }

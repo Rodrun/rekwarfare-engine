@@ -33,10 +33,6 @@ void setSoundVolume(Sound* s, unsigned int vol) {
     Mix_VolumeChunk(s, (int) vol);
 }
 
-bool initSDLMixer(int flags) {
-    return (Mix_Init(flags) & flags) == flags;
-}
-
 int beginAudioFormat(int frequency, Uint16 format, ChannelType t,
     int chunksize) {
     return Mix_OpenAudio(frequency, format, t, chunksize);
@@ -48,10 +44,6 @@ void endAudioFormat() {
 
 int getCurrentAudioFormat(AudioFormat& af) {
     return Mix_QuerySpec(&af.frequency, &af.format, &af.channels);
-}
-
-void closeSDLMixer() {
-    Mix_CloseAudio();
 }
 
 }

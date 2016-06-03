@@ -56,7 +56,10 @@ I try my best to make the engine very simple to use. To get a window started up 
 
 ```
 using namespace rekwarfare;
-Window window("A window!", REKWARFARE_WINDOWPOS_UNDEF, REKWARFARE_WINDOWPOS_UNDEF, 800, 400);
+// Feel free to change any of these parameters
+initializeSDL(INIT_EVERYTHING, IMG_PNG, MIX_MP3);
+Window window("A window!", WINDOWPOS_UNDEF, WINDOWPOS_UNDEF, 800, 400);
+initializeOpenGL(window());
 while (window.isRunning()) {
     while (window.getEventPollingState() != 0) {
         window.pollWindowEvents();

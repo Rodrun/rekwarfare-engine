@@ -18,28 +18,16 @@
 
 #include <string>
 
-// 2.1 for compatability for most systems
-#if !defined REKWARFARE_GL_MAJOR
-#   define REKWARFARE_GL_MAJOR 2
-#endif
-#if !defined REKWARFARE_GL_MINOR
-#   define REKWARFARE_GL_MINOR 1
-#endif
-
-#if !defined REKWARFARE_IMG_INIT_FLAGS
-#   define REKWARFARE_IMG_INIT_FLAGS IMG_INIT_PNG
-#endif
-
 namespace rekwarfare {
 
 const extern Uint32 WINDOWPOS_UNDEF;
 
 class Window {
-static Uint32 IMAGE_INIT_FLAGS;
 public:
     Window(std::string title, int x, int y, int width, int height,
         bool resizable=false, bool fullscreen=false);
     ~Window();
+    SDL_Window* operator()();
     /*
     * Update information on basic window states.
     * NOTE: This function already checks for the following:
@@ -63,8 +51,6 @@ public:
     void setVsyncEnabled(bool);
     int getWidth() const { return m_width; }
     int getHeight() const { return m_height; }
-    int getDrawableWidth() const { return m_draww; }
-    int getDrawableHeight() const { return m_drawh; }
     int getX() const { return m_x; }
     int getY() const { return m_y; }
     bool isRunning() const { return m_running; }
@@ -73,26 +59,16 @@ public:
     bool isFocused() const { return m_focused; }
     bool hasMouseEntered() const { return m_mouseenter; }
     bool isFullscreen() const { return m_fullscreen; }
+    bool setupSuccessfully() const { return m_successsetup; }
     std::string getTitle() const { return m_title; }
     SDL_Window* getWindow() const { return m_win; }
     SDL_Event e; // wontfix name
 
 private:
-    /*
-    * Setup SDL, SDL_Window, OpenGL, and throw on error
-    */
-    void setupSystems();
-    /*
-    * setupX()
-    * returns: true if no errors occured.
-    */
-    bool setupSDL();
     bool setupWindow();
-    bool setupGL();
-    void updateDrawDimensions();
 
     std::string m_title;
-    int m_x = 0, m_y = 0, m_width = 0, m_height = 0, m_draww = 0, m_drawh = 0;
+    int m_x = 0, m_y = 0, m_width = 0, m_height = 0;
     bool m_vsync = true;
     bool m_running = true;
     bool m_resizable = false;
@@ -103,8 +79,8 @@ private:
     bool m_mouseenter = false;
 //    bool m_moved = false;
     bool m_fullscreen;
+    bool m_successsetup;
     SDL_Window* m_win = nullptr;
-    SDL_GLContext m_glcontext;
 };
 
 }

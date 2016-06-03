@@ -1,5 +1,6 @@
 #pragma once
 
+#include "system/System.hpp"
 #include "audio/SoundPlayer.hpp"
 #include "graphics/Window.hpp"
 #include "graphics/Drawer.hpp"
