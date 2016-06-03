@@ -4,8 +4,7 @@
 using namespace rekwarfare;
 
 int main() {
-    Window window("t1", REKWARFARE_WINDOWPOS_UNDEF, REKWARFARE_WINDOWPOS_UNDEF,
-        800, 640);
+    Window window("t1", WINDOWPOS_UNDEF, WINDOWPOS_UNDEF, 800, 640);
 
     Texture t;
     bool loaded = loadTexture(t, "test/resource/t1.png");
@@ -20,19 +19,31 @@ int main() {
         return 1;
     }
 
+    float rotation = 0;
     Color c = { 1, 0, 0, 1 };
     Color bg = { .5, .5, .25, 1 };
 
     while (window.isRunning()) {
-        window.pollEvents();
+        while (window.getEventPollingState() != 0) {
+            window.pollWindowEvents();
+        }
+
+        if (rotation >= 360)
+            rotation = 0;
+        else
+            rotation++;
+
+        setBackgroundColor(bg);
         window.clear();
 
-        drawRectangle(0, 0, 250, 250, 0, c);
-//        drawTexture(t, 0, 0, window.getWidth(), window.getHeight(), 0, NO_COLOR);
-//        drawText("RW Engine", f, 0, window.getHeight() - 200, 800 / 3, 200,
-//            0, c, BLENDED);
-        //drawText_shaded("t1", f, 0, window.getHeight() - 256, 800 / 16, 200, 0,
-        //    c, bg);
+        drawRectangle(0, 0, 250, 250, rotation, c);
+        drawRectangle(400, 150, 100, 200, -rotation, c);
+        drawLine(125, 125, 425, 150, 0, bg);
+        drawTexture(t, 0, 0, window.getWidth(), window.getHeight(), 0, NO_COLOR);
+        drawText("RW Engine", f, 0, window.getHeight() - 200, 800 / 3, 200,
+            0, c, BLENDED);
+        drawText_shaded("t1", f, 0, window.getHeight() - 256, 800 / 16, 200, 0,
+            c, bg);
 
         window.update();
     }

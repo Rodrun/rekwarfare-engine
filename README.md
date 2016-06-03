@@ -55,13 +55,25 @@ $ make
 I try my best to make the engine very simple to use. To get a window started up and running you can do the following:
 
 ```
-Window window("Yay a window!", REKWARFARE_WINDOWPOS_UNDEF, REKWARFARE_WINDOWPOS_UNDEF, 800, 400);
+using namespace rekwarfare;
+Window window("A window!", REKWARFARE_WINDOWPOS_UNDEF, REKWARFARE_WINDOWPOS_UNDEF, 800, 400);
 while (window.isRunning()) {
-    window.pollEvents();
+    while (window.getEventPollingState() != 0) {
+        window.pollWindowEvents();
+        switch (window.e) {
+            // Check for some events
+        }
+    }
     window.clear();
     // Do some stuff here
     window.update();
 }
 ```
 
+**Remember** that everything is within the namespace 'rekwarfare'.
+
 Please see the documentation for more. (to be written soon!)
+
+**Possible things to keep in mind:**
+
+I *believe* that, due to the way I've created the 'Window' class so far, you may only be allowed to use one window, and only one. This is because the window calls the necessary functions to initialize SDL and other things. This may change soon.

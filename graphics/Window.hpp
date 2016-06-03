@@ -8,8 +8,6 @@
 *  OpenGL major and minor version is desired other than the default 2.1.
 * Define REKWARFARE_IMG_INIT_FLAGS to your desired IMG_Init() flags, Default is
 *  IMG_INIT_PNG.
-* Define REKWARFARE_DONT_USE_IMAGE if SDL_Image is not desired.
-* Define REKWARFARE_DONT_USE_TTF if SDL_TTF is not desired.
 *
 * NOTES:
 * The window, if not fullscreen, by default is not resizable, use
@@ -21,31 +19,44 @@
 #include <string>
 
 // 2.1 for compatability for most systems
-#ifndef REKWARFARE_GL_MAJOR
+#if !defined REKWARFARE_GL_MAJOR
 #   define REKWARFARE_GL_MAJOR 2
 #endif
-#ifndef REKWARFARE_GL_MINOR
+#if !defined REKWARFARE_GL_MINOR
 #   define REKWARFARE_GL_MINOR 1
 #endif
 
-#ifndef REKWARFARE_IMG_INIT_FLAGS
+#if !defined REKWARFARE_IMG_INIT_FLAGS
 #   define REKWARFARE_IMG_INIT_FLAGS IMG_INIT_PNG
 #endif
 
-#define REKWARFARE_WINDOWPOS_UNDEF SDL_WINDOWPOS_UNDEFINED
-
 namespace rekwarfare {
 
+const extern Uint32 WINDOWPOS_UNDEF;
+
 class Window {
+static Uint32 IMAGE_INIT_FLAGS;
 public:
     Window(std::string title, int x, int y, int width, int height,
         bool resizable=false, bool fullscreen=false);
     ~Window();
-    void pollEvents();
+    /*
+    * Update information on basic window states.
+    * NOTE: This function already checks for the following:
+    * SDL_WINDOWEVENT_MINIMIZED
+    * SDL_WINDOWEVENT_MAXIMIZED
+    * SDL_WINDOWEVENT_RESTORED
+    * SDL_WINDOWEVENT_FOCUS_GAINED
+    * SDL_WINDOWEVENT_FOCUS_LOST
+    * SDL_WINDOWEVENT_ENTER
+    * SDL_WINDOWEVENT_LEAVE
+    */
+    void pollWindowEvents();
     /*
     * Swaps the OpenGL window.
     */
     void update();
+    int getEventPollingState();
     void clear(GLbitfield flags=GL_COLOR_BUFFER_BIT);
     void setWidth(unsigned int);
     void setHeight(unsigned int);
@@ -59,7 +70,6 @@ public:
     bool isRunning() const { return m_running; }
     bool vsyncEnabled() const { return m_vsync; }
     bool isResizable() const { return m_resizable; }
-    bool isResized() const { return m_isResized; }
     bool isFocused() const { return m_focused; }
     bool hasMouseEntered() const { return m_mouseenter; }
     bool isFullscreen() const { return m_fullscreen; }
@@ -87,7 +97,6 @@ private:
     bool m_running = true;
     bool m_resizable = false;
     // Window events
-    bool m_isResized = false;
     bool m_minimized = false;
     bool m_maxmized = false;
     bool m_focused = false;

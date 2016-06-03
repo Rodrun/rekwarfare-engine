@@ -3,17 +3,15 @@
 #include "SDL2/SDL.h"
 #include "SDL_opengl.h"
 
-#ifndef REKWARFARE_DONT_USE_IMAGE
-#   include "SDL2/SDL_image.h"
-#endif
-#ifndef REKWARFARE_DONT_USE_TTF
-#   include "SDL2/SDL_ttf.h"
-#endif
+#include "SDL2/SDL_image.h"
+#include "SDL2/SDL_ttf.h"
 
 #include <string>
 #include <stdexcept>
 
 namespace rekwarfare {
+
+const Uint32 WINDOWPOS_UNDEF = SDL_WINDOWPOS_UNDEFINED;
 
 Window::Window(std::string title, int x, int y, int width, int height,
     bool res, bool fullscreen)
@@ -27,60 +25,52 @@ Window::~Window() {
     SDL_DestroyWindow(m_win);
 
     if (SDL_WasInit(SDL_INIT_VIDEO) != 0) {
-        #ifndef REKWARFARE_DONT_USE_IMAGE
         IMG_Quit();
-        #endif
-        #ifndef REKWARFARE_DONT_USE_TTF
         TTF_Quit();
-        #endif
         SDL_Quit();
     }
 }
 
-void Window::pollEvents() {
-    m_isResized = false;
-    while (SDL_PollEvent(&e) != 0) {
-        switch (e.type) {
-            case SDL_QUIT:
-                m_running = false;
-                break;
-            case SDL_WINDOWEVENT:
-                switch (e.window.event) {
-                    case SDL_WINDOWEVENT_SIZE_CHANGED:
-                        m_isResized = true;
-                        m_draww = e.window.data1;
-                        m_drawh = e.window.data2;
-                        break;
-                    case SDL_WINDOWEVENT_MINIMIZED:
-                        m_minimized = true;
-                        break;
-                    case SDL_WINDOWEVENT_MAXIMIZED:
-                        m_minimized = false;
-                        m_maxmized = true;
-                        break;
-                    case SDL_WINDOWEVENT_RESTORED:
-                        m_minimized = false;
-                        break;
-                    case SDL_WINDOWEVENT_FOCUS_GAINED:
-                        m_focused = true;
-                        break;
-                    case SDL_WINDOWEVENT_FOCUS_LOST:
-                        m_focused = false;
-                        break;
-                    case SDL_WINDOWEVENT_ENTER:
-                        m_mouseenter = true;
-                        break;
-                    case SDL_WINDOWEVENT_LEAVE:
-                        m_mouseenter = false;
-                        break;
-                }
-                break;
-        }
+void Window::pollWindowEvents() {
+    switch (e.type) {
+        case SDL_QUIT:
+            m_running = false;
+            break;
+        case SDL_WINDOWEVENT:
+            switch (e.window.event) {
+                case SDL_WINDOWEVENT_MINIMIZED:
+                    m_minimized = true;
+                    break;
+                case SDL_WINDOWEVENT_MAXIMIZED:
+                    m_minimized = false;
+                    m_maxmized = true;
+                    break;
+                case SDL_WINDOWEVENT_RESTORED:
+                    m_minimized = false;
+                    break;
+                case SDL_WINDOWEVENT_FOCUS_GAINED:
+                    m_focused = true;
+                    break;
+                case SDL_WINDOWEVENT_FOCUS_LOST:
+                    m_focused = false;
+                    break;
+                case SDL_WINDOWEVENT_ENTER:
+                    m_mouseenter = true;
+                    break;
+                case SDL_WINDOWEVENT_LEAVE:
+                    m_mouseenter = false;
+                    break;
+            }
+            break;
     }
 }
 
 void Window::update() {
     SDL_GL_SwapWindow(m_win);
+}
+
+int Window::getEventPollingState() {
+    return SDL_PollEvent(&e);
 }
 
 void Window::clear(GLbitfield flags) {
@@ -90,13 +80,11 @@ void Window::clear(GLbitfield flags) {
 void Window::setWidth(unsigned int w) {
     SDL_SetWindowSize(m_win, w, m_height);
     updateDrawDimensions();
-    m_isResized = true;
 }
 
 void Window::setHeight(unsigned int h) {
     SDL_SetWindowSize(m_win, m_width, h);
     updateDrawDimensions();
-    m_isResized = true;
 }
 
 void Window::setVsyncEnabled(bool flag) {
@@ -117,23 +105,15 @@ bool Window::setupSDL() {
             "Couldn't init SDL! Reason: %s", SDL_GetError());
         return false;
     }
-    #ifndef REKWARFARE_DONT_USE_IMAGE
     if ((IMG_Init(REKWARFARE_IMG_INIT_FLAGS) & REKWARFARE_IMG_INIT_FLAGS)
         != REKWARFARE_IMG_INIT_FLAGS) {
         SDL_LogError(SDL_LOG_CATEGORY_VIDEO,
             "Could not init SDL_image! Reason: {}", IMG_GetError());
         return false;
-    } else {
-        SDL_Log("SDL_Image initialized successfully!");
     }
-    #endif
-    #ifndef REKWARFARE_DONT_USE_TTF
     if (TTF_Init() == -1) {
         SDL_Log("Could not init SDL_TTF! Reason: {}", TTF_GetError());
-    } else {
-        SDL_Log("SDL_TTF initialized successfully!");
     }
-    #endif
     return true;
 }
 
