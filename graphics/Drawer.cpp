@@ -13,6 +13,10 @@ namespace rekwarfare {
 const GLint NEAREST = GL_NEAREST;
 const GLint LINEAR = GL_LINEAR;
 const Color NO_COLOR = { -1, -1, -1, -1 };
+const Color RED = { 1, 0, 0, 1 };
+const Color GREEN = { 0, 1, 0, 1 };
+const Color BLUE = { 0, 0, 1, 1 };
+const Color WHITE = { 1, 1, 1, 1 };
 const WrapMode REPEAT = GL_REPEAT;
 const WrapMode MIRROR_REPEAT = GL_MIRRORED_REPEAT;
 const WrapMode CLAMP_EDGE = GL_CLAMP_TO_EDGE;
@@ -23,8 +27,6 @@ const FilterType MIPMAP_NEAREST_LINEAR = GL_NEAREST_MIPMAP_LINEAR;
 const FilterType MIPMAP_LINEAR_LINEAR = GL_LINEAR_MIPMAP_LINEAR;
 
 namespace {
-    RenderingMode rendering_mode = VERTEX_ARRAY;
-    Tid last_tex_id = -1;
     /* The default wrap mode, can be changed with setWrappingMode(). */
     WrapMode wrap_mode = REPEAT;
     /*
@@ -231,35 +233,33 @@ void drawTexture(Texture t, double x, double y, double w, double h,
 
     glBindTexture(GL_TEXTURE_2D, t.id);
 
-    if (rendering_mode == IMMEDIATE_MODE) {
-        glBegin(GL_QUADS);
-            if (!(c.r < 0 || c.g < 0 || c.b < 0 || c.a < 0))
-                glColor4f(c.r, c.g, c.b, c.a);
-            glTexCoord2f(left, top);
-            glVertex2d(x, y);
-            glTexCoord2f(right, top);
-            glVertex2d(x + w, y);
-            glTexCoord2f(right, bottom);
-            glVertex2d(x + w, y + h);
-            glTexCoord2f(left, bottom);
-            glVertex2d(x, y + h);
-        glEnd();
-    } else if (rendering_mode == VERTEX_ARRAY) {
-        const GLfloat UV[8] = {
-            // Counter clock-wise
-            // 0, 0, is the lower left, 1, 1 is top right
-            left, bottom, // Lower Left
-            right, bottom, // Lower right
-            right, top, // Top Right
-            left, top // Top Left
-        };
+    glBegin(GL_QUADS);
+        if (!(c.r < 0 || c.g < 0 || c.b < 0 || c.a < 0))
+            glColor4f(c.r, c.g, c.b, c.a);
+        glTexCoord2f(left, top);
+        glVertex2d(x, y);
+        glTexCoord2f(right, top);
+        glVertex2d(x + w, y);
+        glTexCoord2f(right, bottom);
+        glVertex2d(x + w, y + h);
+        glTexCoord2f(left, bottom);
+        glVertex2d(x, y + h);
+    glEnd();
+#if 0
+    const GLfloat UV[8] = {
+        // Counter clock-wise
+        // 0, 0, is the lower left, 1, 1 is top right
+        left, bottom, // Lower Left
+        right, bottom, // Lower right
+        right, top, // Top Right
+        left, top // Top Left
+    };
 
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glClientActiveTexture(GL_TEXTURE_2D);
-        glTexCoordPointer(2, GL_DOUBLE, 0, &UV);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    }
-
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glClientActiveTexture(GL_TEXTURE_2D);
+    glTexCoordPointer(2, GL_DOUBLE, 0, &UV);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
     glBindTexture(GL_TEXTURE_2D, 0);
     glPopMatrix();
 }
@@ -278,44 +278,32 @@ void drawRectangle(double x, double y, double w, double h, double rotation,
         glRotated(rotation, 0, 0, 1);
         glTranslated(-(x + w / 2), -(y + h / 2), 0);
     }
-    if (rendering_mode == IMMEDIATE_MODE) {
-        glBegin(GL_TRIANGLES);
-            glColor4f(c.r, c.g, c.b, c.a);
-            glVertex2d(x, y);
-            glVertex2d(x + w, y);
-            glVertex2d(x + w, y + h);
+    const GLdouble vertices[12] = {
+        // Bottom left
+        x, y,
+        x, y + h,
+        x + w, y + h,
+        // Top right
+        x + w, y + h,
+        x + w, y,
+        x, y
+    };
+    float colors[] = {
+        c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a,
+        c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a,
+        c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a,
+    };
 
-            glVertex2d(x + w, y + h);
-            glVertex2d(x, y + h);
-            glVertex2d(x, y);
-        glEnd();
-    } else if (rendering_mode == VERTEX_ARRAY) {
-        const GLdouble vertices[12] = {
-            // Bottom left
-            x, y,
-            x, y + h,
-            x + w, y + h,
-            // Top right
-            x + w, y + h,
-            x + w, y,
-            x, y
-        };
-        float colors[] = {
-            c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a,
-            c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a,
-            c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a,
-        };
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
+    glVertexPointer(2, GL_DOUBLE, 0, vertices);
+    glColorPointer(4, GL_FLOAT, 0, colors);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-        glVertexPointer(2, GL_DOUBLE, 0, vertices);
-        glColorPointer(4, GL_FLOAT, 0, colors);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
-    }
     glPopMatrix();
 }
 
@@ -329,27 +317,35 @@ void drawLine(double x1, double y1, double x2, double y2, double rotation,
         glTranslated(-(x1 + x2 / 2), -(y1 + y2 / 2), 0);
     }
 
-    if (rendering_mode == IMMEDIATE_MODE) {
-        glBegin(GL_LINES);
-            glColor4f(c.r, c.g, c.b, c.a);
-            glVertex2d(x1, y1);
-            glVertex2d(x2, y2);
-        glEnd();
-        glPopMatrix();
-    } else if (rendering_mode == VERTEX_ARRAY) {
-        const float colors[] = { c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a };
-        const double verts[4] = { x1, y1, x2, y2 };
+    const float colors[] = { c.r, c.g, c.b, c.a, c.r, c.g, c.b, c.a };
+    const double verts[4] = { x1, y1, x2, y2 };
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
-        glVertexPointer(2, GL_DOUBLE, 0, verts);
-        glColorPointer(4, GL_FLOAT, 0, colors);
-        glDrawArrays(GL_LINES, 0, 2);
+    glVertexPointer(2, GL_DOUBLE, 0, verts);
+    glColorPointer(4, GL_FLOAT, 0, colors);
+    glDrawArrays(GL_LINES, 0, 2);
 
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
-    }
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+
+    glPopMatrix();
+}
+
+void drawPoint(double x, double y, Color c) {
+    const float color[] = { c.r, c.g, c.b, c.a };
+    const double vert[2] = { x, y };
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    glVertexPointer(2, GL_DOUBLE, 0, vert);
+    glColorPointer(4, GL_FLOAT, 0, color);
+    glDrawArrays(GL_POINTS, 0, 2);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 }
 
 void drawText(std::string s, Font* f, double x, double y, double w, double h,
@@ -370,7 +366,7 @@ void drawText(std::string s, Font* f, double x, double y, double w, double h,
                 sf = TTF_RenderText_Blended(f, s.c_str(), c());
             break;
     }
-    loadAndRenderText(sf, x, y, w, h, rotation, c, min, mag);
+    loadAndRenderText(sf, x, y, w, h, rotation, NO_COLOR, min, mag);
     SDL_FreeSurface(sf);
 }
 
@@ -408,6 +404,18 @@ FilterType getDefaultMinFilterType() {
 
 FilterType getDefaultMagFilterType() {
     return default_filter_mag;
+}
+
+void translateScreen(double x, double y) {
+    glTranslated(x, y, 0);
+}
+
+void pushMatrix() {
+    glPushMatrix();
+}
+
+void popMatrix() {
+    glPopMatrix();
 }
 
 }

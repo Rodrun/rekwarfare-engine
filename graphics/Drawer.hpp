@@ -1,6 +1,6 @@
 /*
 * Collection of datatypes and functions that modify the screen (e.g. render
-*  primitive types, render textures, load textures, render text)
+*  primitive types, render textures, load textures, render text).
 */
 #pragma once
 
@@ -42,8 +42,6 @@ extern const WrapMode CLAMP_EDGE;
 /* Equivalent to GL_CLAMP_TO_BORDER. */
 extern const WrapMode CLAMP_BORDER;
 
-enum RenderingMode { VERTEX_ARRAY, IMMEDIATE_MODE };
-
 typedef TTF_Font Font;
 /*
 * Short for Texture ID.
@@ -58,7 +56,12 @@ typedef struct {
     SDL_Color operator()();
 } Color;
 
+// Predefined colors
 extern const Color NO_COLOR;
+extern const Color RED;
+extern const Color GREEN;
+extern const Color BLUE;
+extern const Color WHITE;
 
 typedef struct {
     int w;
@@ -86,7 +89,7 @@ typedef struct {
 /*
 * Modes of (text) rendering. Ordered from fastest to slowest.
 */
-enum TextRenderMode { SOLID, /*SHADED,*/ BLENDED }; // Omit SHADED!
+enum TextRenderMode { SOLID, BLENDED };
 /*
 * Type of text to render.
 */
@@ -140,8 +143,6 @@ int getFontDescent(const Font*);
 Dimension2i getSizeOfString(Font* f, std::string s);
 /*
 * Draw a section of a texture.
-* NOTE: To use original texture color, assign one(or more)of Color's members
-*  to -1.
 * tx/ty: Tile x/y
 * tw/th: Tile width/height
 */
@@ -149,10 +150,7 @@ void drawTexture(Texture, double x, double y, double w, double h,
     unsigned int tx, unsigned int ty, unsigned int tw, unsigned int th,
     double rotation, Color);
 /*
-* Draw a whole texture. Calls drawTexture() with tw & th being the size of the
-*  whole texture, and tx & ty = 0.
-* NOTE: To use original texture color, assign one(or more)of Color's members
-*  to -1.
+* Draw a complete texture.
 */
 void drawTexture(Texture, double x, double y, double w, double h,
     double rotation, Color);
@@ -160,6 +158,7 @@ void drawRectangle(double x, double y, double w, double h, double rotation,
     Color);
 void drawLine(double x1, double y1, double x2, double y2, double rotation,
     Color);
+void drawPoint(double x, double y, Color);
 /*
 * Render a string in either LATIN1 or UTF8 (default UTF8).
 * s: String to render.
@@ -185,7 +184,14 @@ void setDefaultMagFilterType(FilterType);
 WrapMode getWrappingMode();
 FilterType getDefaultMinFilterType();
 FilterType getDefaultMagFilterType();
-void setRenderingMode(RenderingMode);
-RenderingMode getRenderingMode();
+void translateScreen(double x, double y);
+/*
+* Equivalent of glPushMatrix().
+*/
+void pushMatrix();
+/*
+* Equivalent of glPopMatrix().
+*/
+void popMatrix();
 
 }
