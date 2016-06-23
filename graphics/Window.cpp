@@ -21,12 +21,6 @@ Window::Window(std::string title, int x, int y, int width, int height,
 
 Window::~Window() {
     SDL_DestroyWindow(m_win);
-
-    if (SDL_WasInit(SDL_INIT_VIDEO) != 0) {
-        IMG_Quit();
-        TTF_Quit();
-        SDL_Quit();
-    }
 }
 
 SDL_Window* Window::operator()() {
