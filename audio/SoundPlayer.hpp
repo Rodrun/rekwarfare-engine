@@ -1,7 +1,7 @@
-#pragma once
 /*
 * Handles audio-related functions.
 */
+#pragma once
 
 #include "SDL2/SDL_mixer.h"
 

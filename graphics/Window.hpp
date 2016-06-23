@@ -1,4 +1,3 @@
-#pragma once
 /*
 * Window will handle the initialization of video-related SDL systems & OpenGL,
 *  and of course, the drawing window.
@@ -13,6 +12,7 @@
 * The window, if not fullscreen, by default is not resizable, use
 *  setResizable().
 */
+#pragma once
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_opengl.h"
 
