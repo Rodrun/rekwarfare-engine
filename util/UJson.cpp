@@ -1,6 +1,6 @@
-#include "Ujson.h"
+#include "UJson.hpp"
 
-#include "UFile.h"
+#include "UFile.hpp"
 
 #include "lib/json11/json11.hpp"
 

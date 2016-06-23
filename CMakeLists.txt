@@ -21,18 +21,17 @@ add_definitions("-std=c++11 -g -Wall -pedantic-errors -Wextra")
 
 # Client
 add_library(rekwarfare-engine
+    lib/json11/json11.cpp
     system/System.cpp
     system/Input.cpp
-    lib/json11/json11.cpp
     util/UFile.cpp
-    util/Ujson.cpp
+    util/UJson.cpp
+    util/UString.cpp
     graphics/Window.cpp
     graphics/Drawer.cpp
 #    gui/GUIEntity.cpp      #### Temporarily omitting anything GUI-related
 #    gui/GUIEnvironment.cpp
-    util/Ustring.cpp
     net/NetTypes.cpp
-    net/Protocol.cpp
     net/Client.cpp
     net/Server.cpp
     util/FPSCounter.cpp
