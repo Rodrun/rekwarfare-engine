@@ -10,7 +10,7 @@ typedef unsigned int GID;
 
 class GUIEntity : public Entity {
 public:
-    using Entity::Entity;
+    GUIEntity(float x, float y, float w, float h);
     bool operator==(const GUIEntity&) const;
     bool operator==(const GID&) const;
 

@@ -11,3 +11,6 @@
 #include "net/Socket.hpp"
 #include "util/FPSCounter.hpp"
 #include "util/UString.hpp"
+#include "ent/Entity.hpp"
+#include "gui/GUIEnvironment.hpp"
+#include "gui/GUIEntity.hpp"
