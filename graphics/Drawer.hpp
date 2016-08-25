@@ -4,9 +4,9 @@
 */
 #pragma once
 
-#include "SDL2/SDL.h"
+#include "SDL.h"
 #include "SDL_opengl.h"
-#include "SDL2/SDL_ttf.h"
+#include "SDL_ttf.h"
 
 #include <string>
 
@@ -63,11 +63,16 @@ extern const Color GREEN;
 extern const Color BLUE;
 extern const Color WHITE;
 
+/*
+* Basic dimensions structure.
+*/
 typedef struct {
     int w;
     int h;
 } Dimension2i;
 
+// 'recommended use' meaning it's preferred that you use these functions
+// instead of directly changing the values of a Color struct
 /*
 * Increase the color value, recommended use.
 */
@@ -76,18 +81,22 @@ void color_increase(float& c, float i);
 * Decrease the color value, recommended use.
 */
 void color_decrease(float& c, float d);
+/*
+* Set the color value, recommended use.
+*/
+void color_set(float& c, float s);
 
 typedef struct {
     Tid id = 0;
-    /* Image's width and height */
+    /* Image's width and height. */
     unsigned int img_width;
     unsigned int img_height;
-    // Shouldn't be touched.
     SDL_Surface* surface = nullptr;
 } Texture;
 
 /*
-* Modes of (text) rendering. Ordered from fastest to slowest.
+* Modes of text rendering. SOLID is faster than BLENDED, but BLENDED gives
+*  higher-quality looking results.
 */
 enum TextRenderMode { SOLID, BLENDED };
 /*
@@ -104,6 +113,10 @@ enum TextMode { LATIN1, UTF8 };
 */
 bool loadTexture(Texture& t, std::string path, FilterType min=LINEAR,
     FilterType mag=LINEAR);
+/*
+* Load a SDL_Surface from given path.
+* returns: true on success, false otherwise.
+*/
 bool loadSurface(SDL_Surface*&, std::string path);
 /*
 * Load a texture from an SDL_Surface.

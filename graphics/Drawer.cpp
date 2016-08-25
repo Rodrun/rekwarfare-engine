@@ -1,12 +1,11 @@
 #include "Drawer.hpp"
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
+#include "SDL.h"
+#include "SDL_image.h"
 #include "SDL_opengl.h"
-#include "SDL2/SDL_ttf.h"
+#include "SDL_ttf.h"
 
 #include <string>
-#include <vector>
 
 namespace rekwarfare {
 
@@ -118,6 +117,17 @@ namespace {
             drawTexture(t, x, y, w, h, rotation, c);
         }
     }
+	/*
+	* Normalize the given color value, if not already.
+	*/
+	void validateColor(float& c) {
+		if (c > 1 || c < 0) {
+			if (c > 1)
+				c = 1;
+			else if (c < 0)
+				c = 0;
+		}
+	}
 }
 
 SDL_Color Color::operator()() {
@@ -127,21 +137,18 @@ SDL_Color Color::operator()() {
 }
 
 void color_increase(float& c, float i) {
-    if (!(i > 1) || !(i < 0))
-        c += i;
-    if (c > 1)
-        c = 1;
-    else if (c < 0)
-        c = 0;
+    c += i;
+	validateColor(c);
 }
 
 void color_decrease(float& c, float d) {
-    if (!(d > 1) || !(d < 0))
-        c -= d;
-    if (c > 1)
-        c = 1;
-    else if (c < 0)
-        c = 0;
+    c -= d;
+	validateColor(c);
+}
+
+void color_set(float& c, float s) {
+	c = s;
+	validateColor(c);
 }
 
 bool loadTexture(Texture& t, std::string path, FilterType min, FilterType mag) {
