@@ -1,25 +1,17 @@
 /*
-* Window will handle the initialization of video-related SDL systems & OpenGL,
-*  and of course, the drawing window.
-*
-* MACRO NOTES:
-* Define REKWARFARE_GL_MAJOR and REKWARFARE_GL_MINOR if a different
-*  OpenGL major and minor version is desired other than the default 2.1.
-* Define REKWARFARE_IMG_INIT_FLAGS to your desired IMG_Init() flags, Default is
-*  IMG_INIT_PNG.
-*
-* NOTES:
-* The window, if not fullscreen, by default is not resizable, use
-*  setResizable().
+* The SDL Window that is used for rendering.
 */
 #pragma once
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_opengl.h"
+#include "SDL.h"
+#include "SDL_opengl.h"
 
 #include <string>
 
 namespace rekwarfare {
 
+/*
+* Undefined window position.
+*/
 const extern Uint32 WINDOWPOS_UNDEF;
 
 class Window {
@@ -29,7 +21,7 @@ public:
     ~Window();
     SDL_Window* operator()();
     /*
-    * Update information on basic window states.
+    * Handle updating information on basic window states.
     * NOTE: This function already checks for the following:
     * SDL_WINDOWEVENT_MINIMIZED
     * SDL_WINDOWEVENT_MAXIMIZED
@@ -41,24 +33,53 @@ public:
     */
     void pollWindowEvents();
     /*
-    * Swaps the OpenGL window.
+    * Swaps (updates) the OpenGL window. Typically called after all rendering
+	*  functions have been called.
     */
     void update();
+	/*
+	* Poll SDL's event and check if there is an event.
+	* NOTE: Use hasEventsReady() for better semantics. Typically one would
+	*  check if the return is not equal (!=) to 0.
+	* returns: 0 when no state.
+	*/
     int getEventPollingState();
+	/*
+	* Check if there are any SDL Events to check.
+	* returns: true if there are events to check, false otherwise.
+	*/
+	bool hasEventsReady();
+	/*
+	* Clear the screen.
+	*/
     void clear(GLbitfield flags=GL_COLOR_BUFFER_BIT);
     void setWidth(unsigned int);
     void setHeight(unsigned int);
     void setVsyncEnabled(bool);
     int getWidth() const { return m_width; }
     int getHeight() const { return m_height; }
+	/*
+	* Get the screen's drawable width.
+	*/
+	int getDrawWidth() const;
+	/*
+	* Get the screen's drawable height.
+	*/
+	int getDrawHeight() const;
     int getX() const { return m_x; }
     int getY() const { return m_y; }
     bool isRunning() const { return m_running; }
-    bool vsyncEnabled() const { return m_vsync; }
+    bool hasVsyncEnabled() const { return m_vsync; }
     bool isResizable() const { return m_resizable; }
     bool isFocused() const { return m_focused; }
+	/*
+	* Check if the mouse is inside the window.
+	*/
     bool hasMouseEntered() const { return m_mouseenter; }
     bool isFullscreen() const { return m_fullscreen; }
+	/*
+	* Check if the window setup successfully.
+	*/
     bool setupSuccessfully() const { return m_successsetup; }
     std::string getTitle() const { return m_title; }
     SDL_Window* getWindow() const { return m_win; }
@@ -69,6 +90,9 @@ private:
 
     std::string m_title;
     int m_x = 0, m_y = 0, m_width = 0, m_height = 0;
+	SDL_Window* m_win = nullptr;
+	/* Successful setup of window? */
+	bool m_successsetup;
     bool m_vsync = true;
     bool m_running = true;
     bool m_resizable = false;
@@ -77,10 +101,7 @@ private:
     bool m_maxmized = false;
     bool m_focused = false;
     bool m_mouseenter = false;
-//    bool m_moved = false;
     bool m_fullscreen;
-    bool m_successsetup;
-    SDL_Window* m_win = nullptr;
 };
 
 }

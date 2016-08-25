@@ -1,8 +1,8 @@
 #include "Window.hpp"
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
-#include "SDL2/SDL_ttf.h"
+#include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_ttf.h"
 #include "SDL_opengl.h"
 
 #include <string>
@@ -112,6 +112,18 @@ bool Window::setupWindow() {
 
     SDL_GetWindowPosition(m_win, &m_x, &m_y);
     return true;
+}
+
+int Window::getDrawWidth() const {
+	int w;
+	SDL_GL_GetDrawableSize(m_win, &w, nullptr);
+	return w;
+}
+
+int Window::getDrawHeight() const {
+	int h;
+	SDL_GL_GetDrawableSize(m_win, nullptr, &h);
+	return h;
 }
 
 }
