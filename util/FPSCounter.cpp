@@ -1,13 +1,13 @@
 #include "FPSCounter.hpp"
 
-#include "SDL2/SDL.h"
+#include "SDL.h"
 
 #include <vector>
 #include <cmath>
 
 namespace rekwarfare {
 
-FPSCounter::FPSCounter(const unsigned int max) : m_maxsamples(max) {
+FPSCounter::FPSCounter(unsigned int max) : m_maxsamples(max) {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,
         "Initialized FPS counter with %i max samples", m_maxsamples);
     m_lasttime = SDL_GetTicks();

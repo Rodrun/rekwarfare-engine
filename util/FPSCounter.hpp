@@ -15,21 +15,21 @@ public:
     *  is better to use a smaller number rather than a larger one. Default
     *  is DEFAULT_SAMPLE_SIZE.
     */
-    FPSCounter(const unsigned int max_samples=DEFAULT_SAMPLE_SIZE);
+    FPSCounter(unsigned int max_samples=DEFAULT_SAMPLE_SIZE);
     /*
-    * Call BEFORE anything else occurs.
+    * Setup the counter, call right before the main loop.
     */
     void precalculate();
     /*
-    * Collect FPS samples
+    * Collect FPS samples.
     */
     void collectSamples();
     /*
     * Obtain current FPS.
-    * integer: Set to true if a decimal number is not desired (e.g. 3.14)
-    * returns: frames per second
+    * integer: Set to true if an integer is desired.
+    * returns: Calculated frames per second.
     */
-    float getFPS(bool integer) const;
+    float getFPS(bool integer=true) const;
 
 private:
     mutable unsigned int m_maxsamples;

@@ -4,10 +4,13 @@
 
 #include <string>
 
-#include <unistd.h>
-#include <sys/socket.h>
 #include <sys/types.h>
-#include <netdb.h>
+#ifdef _WIN32
+#else
+#	include <unistd.h>
+#	include <sys/socket.h>
+#	include <netdb.h>
+#endif
 
 #define DEFAULT_PLAYERNAME "Player"
 

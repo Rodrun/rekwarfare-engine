@@ -7,11 +7,14 @@
 #include <cerrno>
 #include <iostream>
 
-#include <unistd.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
 #include <fcntl.h>
+#ifdef _WIN32
+#else
+#	include <unistd.h>
+#	include <sys/socket.h>
+#	include <netdb.h>
+#endif
 
 namespace rekwarfare {
 

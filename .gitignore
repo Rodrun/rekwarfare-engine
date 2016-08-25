@@ -13,3 +13,5 @@ CMakeCache
 Gemfile
 # Default resource package
 resource/*.zip
+*.cbp
+rekwarfare-engine.layout

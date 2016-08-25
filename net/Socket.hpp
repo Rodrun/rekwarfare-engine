@@ -5,8 +5,11 @@
 #include <string>
 
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
+#ifdef _WIN32
+#else
+#	include <sys/socket.h>
+#	include <netdb.h>
+#endif
 
 namespace rekwarfare {
 
@@ -21,7 +24,7 @@ public:
     * returns: 0 on success, error code on fail
     */
     int join(std::string host, std::string port,
-        const protocol p=SOCK_STREAM);
+        const protocol p=PROTOCOL_TCP);
     /*
     * Send a message to the server
     * returns: bytes sent on success, -1 on fail

@@ -6,8 +6,11 @@
 #include <string>
 #include <vector>
 
-#include <sys/time.h>
-#include <netdb.h>
+#ifdef _WIN32
+#else
+#	include <sys/time.h>
+#	include <netdb.h>
+#endif
 
 namespace rekwarfare {
 
