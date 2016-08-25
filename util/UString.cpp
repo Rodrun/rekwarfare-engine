@@ -1,5 +1,8 @@
 #include "UString.hpp"
 
+#ifdef _WIN32
+#	include <cctype>
+#endif
 #include <vector>
 #include <string>
 #include <cstring>
