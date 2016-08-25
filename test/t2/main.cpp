@@ -7,14 +7,13 @@
 
 using namespace rekwarfare;
 
-int main() {
+int main(int argc, char* argv[]) {
     // Initialize with RW-engine
     initializeSDL(INIT_EVERYTHING, IMG_PNG, MIX_MP3);
     Window window("t2", WINDOWPOS_UNDEF, WINDOWPOS_UNDEF, WIDTH, HEIGHT);
     initializeOpenGL(2, 1, window());
     setEvent(&window.e);
 
-    //GUIEnvironment environment;
     Entity a(300, 300, 100, 100);
     Entity b(0, 0, 100, 100);
     while (window.isRunning()) {
@@ -31,6 +30,7 @@ int main() {
         else
             drawRectangle(a.x, a.y, a.w, a.h, 0, GREEN);
         drawRectangle(b.x, b.y, b.w, b.h, 0, BLUE);
+
         window.update();
     }
 

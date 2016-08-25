@@ -24,17 +24,17 @@ void drawO(Section);
 bool sectionOn(Section, int);
 bool sectionOn(Section);
 
-int main() {
+int main(int argc, char* argv[]) {
     // Initialize with RW-engine
     initializeSDL(INIT_EVERYTHING, IMG_PNG, MIX_MP3);
     Window window("t1", WINDOWPOS_UNDEF, WINDOWPOS_UNDEF, WIDTH, HEIGHT);
     initializeOpenGL(2, 1, window());
     setEvent(&window.e);
 
-    Font* font = loadFont("test/resource/AIRSTREA.TTF", 24);
+/*    Font* font = loadFont("test/resource/AIRSTREA.TTF", 24);
     if (font == nullptr) {
         std::cout << "Failed to load font!\n";
-    }
+    }*/
 
     typedef struct {
         int number;
@@ -174,7 +174,7 @@ int main() {
         window.update();
     }
 
-    deleteFont(font);
+    //deleteFont(font);
     destroySDL();
     return 0;
 }
@@ -207,23 +207,3 @@ bool sectionOn(Section s, int pn) {
 bool sectionOn(Section s) {
     return (s.player_selection != -1);
 }
-
-/*
-Copyright (c) 2016 Juan Mendez
-
-This software is provided 'as-is', without any express or implied
-warranty. In no event will the authors be held liable for any damages
-arising from the use of this software.
-
-Permission is granted to anyone to use this software for any purpose,
-including commercial applications, and to alter it and redistribute it
-freely, subject to the following restrictions:
-
-1. The origin of this software must not be misrepresented; you must not
-   claim that you wrote the original software. If you use this software
-   in a product, an acknowledgement in the product documentation would be
-   appreciated but is not required.
-2. Altered source versions must be plainly marked as such, and must not be
-   misrepresented as being the original software.
-3. This notice may not be removed or altered from any source distribution.
-*/
