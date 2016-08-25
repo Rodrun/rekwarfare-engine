@@ -1,10 +1,10 @@
 #include "System.hpp"
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
-#include "SDL2/SDL_ttf.h"
-#include "SDL2/SDL_mixer.h"
-#include "SDL2/SDL_opengl.h"
+#include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_ttf.h"
+#include "SDL_mixer.h"
+#include "SDL_opengl.h"
 
 namespace rekwarfare {
 
@@ -23,6 +23,9 @@ const AudioFlags MIX_FLAC = MIX_INIT_FLAC;
 const AudioFlags MIX_MOD = MIX_INIT_MOD;
 const AudioFlags MIX_MP3 = MIX_INIT_MP3;
 const AudioFlags MIX_OGG = MIX_INIT_OGG;
+
+const int DEFAULT_MINOR = 1;
+const int DEFAULT_MAJOR = 2;
 
 bool initializeSDL(SetupFlags f, ImageFlags i, AudioFlags a) {
     if (SDL_Init(f) < 0) {

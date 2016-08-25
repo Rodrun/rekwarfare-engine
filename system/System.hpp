@@ -4,8 +4,8 @@
 */
 #pragma once
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
+#include "SDL.h"
+#include "SDL_image.h"
 
 namespace rekwarfare {
 
@@ -30,6 +30,9 @@ const extern AudioFlags MIX_FLAC;
 const extern AudioFlags MIX_MOD;
 const extern AudioFlags MIX_MP3;
 const extern AudioFlags MIX_OGG;
+
+const extern int DEFAULT_MINOR;
+const extern int DEFAULT_MAJOR;
 
 /*
 * Initialize SDL.
