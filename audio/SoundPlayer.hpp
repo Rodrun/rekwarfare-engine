@@ -3,7 +3,7 @@
 */
 #pragma once
 
-#include "SDL2/SDL_mixer.h"
+#include "SDL_mixer.h"
 
 namespace rekwarfare {
 
@@ -70,9 +70,9 @@ void setSoundVolume(Sound*, unsigned int);
 *  no more loading/playing functions with the given
 *  format are needed (i.e. before termination).
 * chunksize: Bytes used per output sample. (recommended not too large or small)
-* returns: 0 on success, -1 otherwise.
+* returns: true on success, false otherwise.
 */
-int beginAudioFormat(int frequency, Uint16 format, ChannelType, int chunksize);
+bool beginAudioFormat(int frequency, Uint16 format, ChannelType, int chunksize);
 /*
 * No loading/playing functions should be played unless
 *  beginAudioFormat() is called again.

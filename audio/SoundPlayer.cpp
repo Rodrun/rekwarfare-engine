@@ -1,6 +1,6 @@
 #include "SoundPlayer.hpp"
 
-#include "SDL2/SDL_mixer.h"
+#include "SDL_mixer.h"
 
 namespace rekwarfare {
 
@@ -33,9 +33,9 @@ void setSoundVolume(Sound* s, unsigned int vol) {
     Mix_VolumeChunk(s, (int) vol);
 }
 
-int beginAudioFormat(int frequency, Uint16 format, ChannelType t,
+bool beginAudioFormat(int frequency, Uint16 format, ChannelType t,
     int chunksize) {
-    return Mix_OpenAudio(frequency, format, t, chunksize);
+    return Mix_OpenAudio(frequency, format, t, chunksize) == 0 ? true : false;
 }
 
 void endAudioFormat() {
