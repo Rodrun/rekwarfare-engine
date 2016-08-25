@@ -34,11 +34,29 @@ do the following:
 
 Building is pretty simple, feel free to modify the CMakeLists.txt to fit your needs.
 
-I currently only know how to build on GNU/Linux systems...
+## Windows
+
+Clone the repository, make a separate directory to have build files, then build from that directory.
+
+Requires [CMake](https://cmake.org/) and a C++ compiler like [MinGW](http://www.mingw.org/).
+
+So you should do something like this:
+
+1- Clone/download the source
+
+2- Create a separate directory to have build files
+
+3- Open command prompt and navigate to that directory
+
+4- `cmake <source directory> -G "MinGW Makfiles"`
+
+5- `mingw32-make`
 
 ## Linux
 
 Pretty simple, just clone repository, have a separate directory to have build files, then build from that directory.
+
+Requires [CMake](https://cmake.org/) (and git if you don't already have it)!
 
 So following the instructions, you should do something like this:
 
@@ -55,11 +73,11 @@ $ make
 I try my best to make the engine very simple to use. To get a window started up and running you can do the following:
 
 ```
-using namespace rekwarfare;
+using namespace rw;
 // Feel free to change any of these parameters
 initializeSDL(INIT_EVERYTHING, IMG_PNG, MIX_MP3);
 Window window("A window!", WINDOWPOS_UNDEF, WINDOWPOS_UNDEF, 800, 400);
-initializeOpenGL(window());
+initializeOpenGL(2, 1, window());
 while (window.isRunning()) {
     while (window.getEventPollingState() != 0) {
         window.pollWindowEvents();
@@ -71,8 +89,9 @@ while (window.isRunning()) {
     // Do some stuff here
     window.update();
 }
+destroySDL();
 ```
 
-**Remember** that everything is within the namespace 'rekwarfare'.
+**Remember** that everything is within the namespace 'rekwarfare' or 'rw'.
 
 Please see the documentation for more. (to be written soon!)
