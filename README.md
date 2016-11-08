@@ -60,19 +60,19 @@ Requires [CMake](https://cmake.org/) (and git if you don't already have it)!
 
 So following the instructions, you should do something like this:
 
-```
-$ git clone https://github.com/rodrun/rekwarfare-engine.git
-$ mkdir build
-$ cd build
-$ cmake <wherever rekwarfare-engine repository is>
-$ make
+```sh
+git clone https://github.com/rodrun/rekwarfare-engine.git
+mkdir build
+cd build
+cmake <wherever rekwarfare-engine repository is>
+make
 ```
 
 # Starting off
 
 I try my best to make the engine very simple to use. To get a window started up and running you can do the following:
 
-```
+```cpp
 using namespace rw;
 // Feel free to change any of these parameters
 initializeSDL(INIT_EVERYTHING, IMG_PNG, MIX_MP3);

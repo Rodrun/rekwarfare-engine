@@ -24,7 +24,7 @@ Lines shouldn't be longer than ~80 characters long.
 
 Examples:
 
-```
+```cpp
 // What I DON'T want to see:
 void f()
 { // Brace on a newline! Invalid!
@@ -44,7 +44,7 @@ void empty() { } // acceptable!
 
 Here is a visual on what I mean:
 
-```
+```cpp
 struct Y {
         ...
 } // Notice the same indentation as 'struct'
@@ -57,7 +57,7 @@ struct Y {
 
 Visual:
 
-```
+```cpp
 public:
     Foo();
 
@@ -81,7 +81,7 @@ private:
 
 Example of proper classes:
 
-```
+```cpp
 class Base {
 public:
     Base(int x);
@@ -102,7 +102,7 @@ protected:
 
 Referring to `if (x) ...;` or
 
-```
+```cpp
 if (x)
     ...;
 else
@@ -120,7 +120,7 @@ If it can be fit into one line without surpassing the line limit, keep it in one
 
 A proper switch statement should look like this:
 
-```
+```cpp
 switch (x) {
     case y:
         ...
@@ -164,7 +164,7 @@ Referring to `/* */`
 
 Examples:
 
-```
+```cpp
 // This is a nicely formatted doc:
 /*
 * Function for doing foo.
