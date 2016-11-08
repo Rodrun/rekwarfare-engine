@@ -29,12 +29,17 @@ const char* getJoystickName(int index) {
     return "";
 }
 
-bool keyPressed() {
+bool keyWasPressed() {
     return (e->type == SDL_KEYDOWN);
 }
 
-Key getKey() {
-    return e->key.keysym.sym;
+bool keyPressed(Key k) {
+	const auto keypressed = getKey();
+	return keypressed[k];
+}
+
+Key* getKey() {
+    return (Key*) SDL_GetKeyboardState(nullptr);
 }
 
 bool mouseButtonPressed() {

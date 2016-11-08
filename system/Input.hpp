@@ -12,7 +12,7 @@ typedef SDL_JoyBallEvent JoyBallEvent;
 typedef SDL_JoyHatEvent JoyHatEvent;
 typedef SDL_JoyButtonEvent JoyButtonEvent;
 typedef SDL_Joystick Joystick;
-typedef SDL_Keycode Key;
+typedef Uint8 Key;
 typedef Uint8 MouseButton;
 typedef SDL_MouseButtonEvent MouseButtonEvent;
 typedef SDL_MouseMotionEvent MouseMotionEvent;
@@ -46,11 +46,15 @@ const char* getJoystickName(int index);
 /*
 * Check if a key was pressed.
 */
-bool keyPressed();
+bool keyWasPressed();
+/*
+* Check if a certain key or keys were pressed.
+*/
+bool keyPressed(Key);
 /*
 * Get key pressed.
 */
-Key getKey();
+Key* getKey();
 /*
 * Check if a mouse button has been pressed.
 */
