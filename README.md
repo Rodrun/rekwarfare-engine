@@ -48,7 +48,7 @@ So you should do something like this:
 
 3- Open command prompt and navigate to that directory
 
-4- `cmake <source directory> -G "MinGW Makfiles"`
+4- `cmake <source directory> -G "MinGW Makefiles"`
 
 5- `mingw32-make`
 
