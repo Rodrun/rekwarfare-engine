@@ -1,8 +1,8 @@
-# Rekwarfare engine
+# Rekwarfare engine (really a framework)
 
 (I like to call it the RW Engine)
 
-A 2D game engine that utilizes SDL2 and OpenGL.
+A 2D game framework that utilizes SDL2 and OpenGL.
 
 ## What is it for?
 
