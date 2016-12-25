@@ -117,17 +117,17 @@ namespace {
             drawTexture(t, x, y, w, h, rotation, c);
         }
     }
-	/*
-	* Normalize the given color value, if not already.
-	*/
-	void validateColor(float& c) {
-		if (c > 1 || c < 0) {
-			if (c > 1)
-				c = 1;
-			else if (c < 0)
-				c = 0;
-		}
-	}
+    /*
+    * Normalize the given color value, if not already.
+    */
+    void validateColor(float& c) {
+        if (c > 1 || c < 0) {
+            if (c > 1)
+                c = 1;
+            else if (c < 0)
+                c = 0;
+        }
+    }
 }
 
 SDL_Color Color::operator()() {
@@ -138,17 +138,17 @@ SDL_Color Color::operator()() {
 
 void color_increase(float& c, float i) {
     c += i;
-	validateColor(c);
+    validateColor(c);
 }
 
 void color_decrease(float& c, float d) {
     c -= d;
-	validateColor(c);
+    validateColor(c);
 }
 
 void color_set(float& c, float s) {
-	c = s;
-	validateColor(c);
+    c = s;
+    validateColor(c);
 }
 
 bool loadTexture(Texture& t, std::string path, FilterType min, FilterType mag) {
@@ -220,7 +220,7 @@ Dimension2i getSizeOfString(Font* f, std::string s) {
 
 void drawTexture(Texture t, double x, double y, double w, double h,
     unsigned int tx, unsigned int ty, unsigned int tw, unsigned int th,
-    double rotation, Color c) {
+    double rotation, Color c, Flip f) {
     glPushMatrix();
     if (rotation != 0){
         glTranslated(x + w / 2, y + h / 2, 0);
@@ -243,14 +243,35 @@ void drawTexture(Texture t, double x, double y, double w, double h,
     glBegin(GL_QUADS);
         if (!(c.r < 0 || c.g < 0 || c.b < 0 || c.a < 0))
             glColor4f(c.r, c.g, c.b, c.a);
-        glTexCoord2f(left, top);
-        glVertex2d(x, y);
-        glTexCoord2f(right, top);
-        glVertex2d(x + w, y);
-        glTexCoord2f(right, bottom);
-        glVertex2d(x + w, y + h);
-        glTexCoord2f(left, bottom);
-        glVertex2d(x, y + h);
+        // bit of a blocky mess but it'll do for now...
+        if (f == NOFLIP) {
+            glTexCoord2f(left, top);
+            glVertex2d(x, y);
+            glTexCoord2f(right, top);
+            glVertex2d(x + w, y);
+            glTexCoord2f(right, bottom);
+            glVertex2d(x + w, y + h);
+            glTexCoord2f(left, bottom);
+            glVertex2d(x, y + h);
+        } else if (f == HORIZONTAL) {
+            glTexCoord2f(left, top);
+            glVertex2d(x, y + h);
+            glTexCoord2f(right, top);
+            glVertex2d(x + w, y + h);
+            glTexCoord2f(right, bottom);
+            glVertex2d(x + w, y);
+            glTexCoord2f(left, bottom);
+            glVertex2d(x, y);
+        } else if (f == VERTICAL) {
+            glTexCoord2f(left, top);
+            glVertex2d(x + w, y);
+            glTexCoord2f(right, top);
+            glVertex2d(x, y);
+            glTexCoord2f(right, bottom);
+            glVertex2d(x, y + h);
+            glTexCoord2f(left, bottom);
+            glVertex2d(x + w, y + h);
+        }
     glEnd();
 #if 0
     const GLfloat UV[8] = {
@@ -272,8 +293,8 @@ void drawTexture(Texture t, double x, double y, double w, double h,
 }
 
 void drawTexture(Texture t, double x, double y, double w, double h,
-    double rotation, Color c) {
-    drawTexture(t, x, y, w, h, 1, 1, t.img_width, t.img_height, rotation, c);
+    double rotation, Color c, Flip f) {
+    drawTexture(t, x, y, w, h, 1, 1, t.img_width, t.img_height, rotation, c, f);
 }
 
 void drawRectangle(double x, double y, double w, double h, double rotation,

@@ -95,6 +95,13 @@ typedef struct {
 } Texture;
 
 /*
+* Texture flip.
+* NOFLIP - Normal texture, no flip.
+* VERTICAL - Vertical flip (center Y axis flip).
+* HORIZONTAL - Horizontal flip (center X axis flip).
+*/
+enum Flip { NOFLIP, VERTICAL, HORIZONTAL };
+/*
 * Modes of text rendering. SOLID is faster than BLENDED, but BLENDED gives
 *  higher-quality looking results.
 */
@@ -135,6 +142,9 @@ void deleteTexture(Texture&);
 * index: Font face from the file. (if it contains multiple)
 */
 Font* loadFont(std::string path, int ptsize, long index=0);
+/*
+* Free a font.
+*/
 void deleteFont(Font*);
 /*
 * Sets font kerning.
@@ -161,12 +171,13 @@ Dimension2i getSizeOfString(Font* f, std::string s);
 */
 void drawTexture(Texture, double x, double y, double w, double h,
     unsigned int tx, unsigned int ty, unsigned int tw, unsigned int th,
-    double rotation, Color);
+    double rotation, Color=NO_COLOR, Flip=NOFLIP);
 /*
 * Draw a complete texture.
 */
 void drawTexture(Texture, double x, double y, double w, double h,
-    double rotation, Color);
+    double rotation, Color=NO_COLOR, Flip=NOFLIP);
+// Basic geometry (except triangle?!)
 void drawRectangle(double x, double y, double w, double h, double rotation,
     Color);
 void drawLine(double x1, double y1, double x2, double y2, double rotation,
@@ -192,18 +203,36 @@ void drawText_shaded(std::string s, Font* f, double x, double y, double w,
 *  are out of range.
 */
 void setWrappingMode(WrapMode);
+/*
+* Set the default min filter for texture rendering.
+*/
 void setDefaultMinFilterType(FilterType);
+/*
+* Set the default mag filter for texture rendering.
+*/
 void setDefaultMagFilterType(FilterType);
+/*
+* Get the current/default wrapping mode.
+*/
 WrapMode getWrappingMode();
+/*
+* Get the default min filter for texture rendering.
+*/
 FilterType getDefaultMinFilterType();
+/*
+* Get the default mag filter for texture rendering.
+*/
 FilterType getDefaultMagFilterType();
+/*
+* Translate the display matrix x and y units.
+*/
 void translateScreen(double x, double y);
 /*
-* Equivalent of glPushMatrix().
+* Wrapper for glPushMatrix().
 */
 void pushMatrix();
 /*
-* Equivalent of glPopMatrix().
+* Wrapper for glPopMatrix().
 */
 void popMatrix();
 
