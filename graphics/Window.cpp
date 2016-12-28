@@ -119,15 +119,15 @@ bool Window::setupWindow() {
 }
 
 int Window::getDrawWidth() const {
-	int w;
-	SDL_GL_GetDrawableSize(m_win, &w, nullptr);
-	return w;
+    int w;
+    SDL_GL_GetDrawableSize(m_win, &w, nullptr);
+    return w;
 }
 
 int Window::getDrawHeight() const {
-	int h;
-	SDL_GL_GetDrawableSize(m_win, nullptr, &h);
-	return h;
+    int h;
+    SDL_GL_GetDrawableSize(m_win, nullptr, &h);
+    return h;
 }
 
 }
