@@ -34,52 +34,52 @@ public:
     void pollWindowEvents();
     /*
     * Swaps (updates) the OpenGL window. Typically called after all rendering
-	*  functions have been called.
+    *  functions have been called.
     */
     void update();
-	/*
-	* Poll SDL's event and check if there is an event.
-	* NOTE: Use hasEventsReady() for better semantics. Typically one would
-	*  check if the return is not equal (!=) to 0.
-	* returns: 0 when no state.
-	*/
+    /*
+    * Poll SDL's event and check if there is an event.
+    * NOTE: Use hasEventsReady() for better semantics. Typically one would
+    *  check if the return is not equal (!=) to 0.
+    * returns: 0 when no state.
+    */
     int getEventPollingState();
-	/*
-	* Check if there are any SDL Events to check.
-	* returns: true if there are events to check, false otherwise.
-	*/
-	bool hasEventsReady();
-	/*
-	* Clear the screen.
-	*/
+    /*
+    * Check if there are any SDL Events to check.
+    * returns: true if there are events to check, false otherwise.
+    */
+    bool hasEventsReady();
+    /*
+    * Clear the screen.
+    */
     void clear(GLbitfield flags=GL_COLOR_BUFFER_BIT);
     void setWidth(unsigned int);
     void setHeight(unsigned int);
     void setVsyncEnabled(bool);
     int getWidth() const { return m_width; }
     int getHeight() const { return m_height; }
-	/*
-	* Get the screen's drawable width.
-	*/
-	int getDrawWidth() const;
-	/*
-	* Get the screen's drawable height.
-	*/
-	int getDrawHeight() const;
+    /*
+    * Get the screen's drawable width.
+    */
+    int getDrawWidth() const;
+    /*
+    * Get the screen's drawable height.
+    */
+    int getDrawHeight() const;
     int getX() const { return m_x; }
     int getY() const { return m_y; }
     bool isRunning() const { return m_running; }
     bool hasVsyncEnabled() const { return m_vsync; }
     bool isResizable() const { return m_resizable; }
     bool isFocused() const { return m_focused; }
-	/*
-	* Check if the mouse is inside the window.
-	*/
+    /*
+    * Check if the mouse is inside the window.
+    */
     bool hasMouseEntered() const { return m_mouseenter; }
     bool isFullscreen() const { return m_fullscreen; }
-	/*
-	* Check if the window setup successfully.
-	*/
+    /*
+    * Check if the window setup successfully.
+    */
     bool setupSuccessfully() const { return m_successsetup; }
     std::string getTitle() const { return m_title; }
     SDL_Window* getWindow() const { return m_win; }
@@ -90,9 +90,9 @@ private:
 
     std::string m_title;
     int m_x = 0, m_y = 0, m_width = 0, m_height = 0;
-	SDL_Window* m_win = nullptr;
-	/* Successful setup of window? */
-	bool m_successsetup;
+    SDL_Window* m_win = nullptr;
+    /* Successful setup of window? */
+    bool m_successsetup;
     bool m_vsync = true;
     bool m_running = true;
     bool m_resizable = false;

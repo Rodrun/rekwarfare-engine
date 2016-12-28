@@ -69,6 +69,10 @@ int Window::getEventPollingState() {
     return SDL_PollEvent(&e);
 }
 
+bool Window::hasEventsReady(){
+    return getEventPollingState() != 0;
+}
+
 void Window::clear(GLbitfield flags) {
     glClear(flags);
 }
