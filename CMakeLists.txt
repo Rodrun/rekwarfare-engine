@@ -2,7 +2,7 @@ project(rekwarfare-engine)
 cmake_minimum_required(VERSION 2.8.8)
 
 # Change to your liking
-set(RWENGINE_ALLOW_TESTS true)
+set(RWENGINE_ALLOW_TESTS false)
 
 # Point to our own cmake modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
@@ -20,8 +20,10 @@ include_directories(${rekwarfare-engine_SOURCE_DIR})
 # Add global definitions
 add_definitions("-std=c++11 -g -Wall -pedantic-errors")
 
+set(CMAKE_BUILD_TYPE Release)
+
 # Client
-add_library(rekwarfare-engine
+add_library(rekwarfare-engine SHARED
     system/System.cpp
     system/Input.cpp
     util/UString.cpp
@@ -47,7 +49,7 @@ target_link_libraries(rekwarfare-engine
     ${SDLTTF_LIBRARY}
 )
 
-# TESTS
+# TESTS set RWENGINE_ALLOW_TESTS true
 if(RWENGINE_ALLOW_TESTS)
 add_executable(t1 test/t1/main.cpp)
 target_link_libraries(t1
