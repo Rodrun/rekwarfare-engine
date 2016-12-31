@@ -30,6 +30,7 @@ add_library(rekwarfare-engine SHARED
     #util/FPSCounter.cpp
     graphics/Window.cpp
     graphics/Drawer.cpp
+    graphics/Texture.cpp
     ent/Entity.cpp
     #gui/GUIEntity.cpp
     #gui/GUIEnvironment.cpp

@@ -2,8 +2,8 @@
 
 namespace rekwarfare {
 
-Entity::Entity(float x, float y, float w, float h) :
-    x(x), y(y), w(w), h(h) { }
+Entity::Entity(float x, float y, float w, float h, float r) :
+    x(x), y(y), w(w), h(h), rotation(r) { }
 
 bool Entity::collides(Entity e) {
     if (x < e.x + e.w && x + w > e.x &&

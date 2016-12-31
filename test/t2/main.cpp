@@ -1,3 +1,4 @@
+// Entity collision detection test
 #include <iostream>
 
 #include "Rekwarfare.hpp"

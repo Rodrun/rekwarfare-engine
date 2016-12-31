@@ -4,7 +4,7 @@ namespace rekwarfare {
 
 class Entity {
 public:
-    Entity(float x, float y, float w, float h);
+    Entity(float x, float y, float w, float h, float r=0);
     virtual ~Entity() { }
     virtual void update() { }
     virtual void render() const { }
@@ -14,6 +14,7 @@ public:
     float y;
     float w;
     float h;
+    float rotation;
 
 };
 

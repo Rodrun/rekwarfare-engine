@@ -5,6 +5,7 @@
 #include "audio/SoundPlayer.hpp"
 #include "graphics/Window.hpp"
 #include "graphics/Drawer.hpp"
+#include "graphics/Texture.hpp"
 //#include "net/Client.hpp"
 //#include "net/NetTypes.hpp"
 //#include "net/Server.hpp"
