@@ -48,13 +48,26 @@ typedef TTF_Font Font;
 */
 typedef GLuint Tid;
 
+/*
+* Structure containing 2 dimensions
+*/
 typedef struct {
+    int w, h;
+} Dimension2i;
+
+/*
+* Struct containing RGBA values for a color. Should use color_X functions to
+*  modify values to ensure valid numbers.
+*/
+struct Color {
     float r;
     float g;
     float b;
     float a;
     SDL_Color operator()();
-} Color;
+    bool operator==(Color) const;
+};
+typedef struct Color Color;
 
 // Predefined colors
 extern const Color NO_COLOR;
@@ -62,17 +75,6 @@ extern const Color RED;
 extern const Color GREEN;
 extern const Color BLUE;
 extern const Color WHITE;
-
-/*
-* Basic dimensions structure.
-*/
-typedef struct {
-    int w;
-    int h;
-} Dimension2i;
-
-// 'recommended use' meaning it's preferred that you use these functions
-// instead of directly changing the values of a Color struct
 /*
 * Increase the color value, recommended use.
 */
@@ -85,14 +87,6 @@ void color_decrease(float& c, float d);
 * Set the color value, recommended use.
 */
 void color_set(float& c, float s);
-
-typedef struct {
-    Tid id = 0;
-    /* Image's width and height. */
-    unsigned int img_width;
-    unsigned int img_height;
-    SDL_Surface* surface = nullptr;
-} Texture;
 
 /*
 * Texture flip.
@@ -110,32 +104,19 @@ enum TextRenderMode { SOLID, BLENDED };
 * Type of text to render.
 */
 enum TextMode { LATIN1, UTF8 };
-
 /*
-* Load a texture.
-* t: Reference to the texture you want to set.
-* min: GL_TEXTURE_MIN_FILTER value. (texture sized down)
-* mag: GL_TEXTURE_MAG_FILTER value. (texture enlarged)
-* returns: true if loading was successful, false otherwise.
+* Validate a min filter. Will make sure the filter is supported.
 */
-bool loadTexture(Texture& t, std::string path, FilterType min=LINEAR,
-    FilterType mag=LINEAR);
+FilterType validateFilter(FilterType t);
 /*
 * Load a SDL_Surface from given path.
 * returns: true on success, false otherwise.
 */
-bool loadSurface(SDL_Surface*&, std::string path);
+SDL_Surface* loadSurface(std::string path);
 /*
-* Load a texture from an SDL_Surface.
-* t: Reference to the texture you want to set.
-* s: SDL_Surface with image information.
-* min: GL_TEXTURE_MIN_FILTER value. (texture sized down)
-* mag: GL_TEXTURE_MAG_FILTER value. (texture enlarged)
-* returns: true if loading was successful, false otherwise.
+* Free an SDL_Surface.
 */
-bool loadTextureFromSurface(Texture& t, SDL_Surface* s, FilterType min=LINEAR,
-    FilterType mag=LINEAR);
-void deleteTexture(Texture&);
+void freeSurface(SDL_Surface*&);
 /*
 * Load a font.
 * ptsize: Point size.
@@ -164,19 +145,6 @@ int getFontDescent(const Font*);
 * returns: A Dimension2i struct containing width and height.
 */
 Dimension2i getSizeOfString(Font* f, std::string s);
-/*
-* Draw a section of a texture.
-* tx/ty: Tile x/y
-* tw/th: Tile width/height
-*/
-void drawTexture(Texture, double x, double y, double w, double h,
-    unsigned int tx, unsigned int ty, unsigned int tw, unsigned int th,
-    double rotation, Color=NO_COLOR, Flip=NOFLIP);
-/*
-* Draw a complete texture.
-*/
-void drawTexture(Texture, double x, double y, double w, double h,
-    double rotation, Color=NO_COLOR, Flip=NOFLIP);
 // Basic geometry (except triangle?!)
 void drawRectangle(double x, double y, double w, double h, double rotation,
     Color);
