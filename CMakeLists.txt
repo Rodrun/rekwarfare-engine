@@ -1,5 +1,5 @@
 project(rekwarfare-engine)
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 3.0.1)
 
 # Change to your liking
 set(RWENGINE_ALLOW_TESTS false)
@@ -15,32 +15,14 @@ find_package(OpenGL REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${OPENGL_gl_LIBRARY})
-include_directories(${rekwarfare-engine_SOURCE_DIR})
+include_directories(${rekwarfare-engine_SOURCE_DIR}/include)
 
 # Add global definitions
 add_definitions("-std=c++11 -g -Wall -pedantic-errors")
 
-set(CMAKE_BUILD_TYPE Release)
+file(GLOB SRC "src/*.cpp")
 
-# Client
-add_library(rekwarfare-engine SHARED
-    system/System.cpp
-    system/Input.cpp
-    util/UString.cpp
-    #util/FPSCounter.cpp
-    graphics/Window.cpp
-    graphics/Drawer.cpp
-    graphics/Texture.cpp
-    ent/Entity.cpp
-    #gui/GUIEntity.cpp
-    #gui/GUIEnvironment.cpp
-    #gui/Button.cpp
-    #net/NetTypes.cpp
-    #net/Client.cpp
-    #net/Server.cpp
-    #net/Socket.cpp
-    audio/SoundPlayer.cpp
-)
+add_library(rekwarfare-engine STATIC ${SRC})
 
 target_link_libraries(rekwarfare-engine
     ${SDL2_LIBRARIES}

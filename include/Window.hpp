@@ -1,5 +1,17 @@
 /*
 * The SDL Window that is used for rendering.
+* Basic start template:
+initializeSDL(...);
+Window window(...);
+initializeOpenGL(...);
+while (window.isRunning()) {
+    while(window.hasEventsReady()) {
+        window.pollWindowEvents();
+    }
+    window.clear();
+    // stuff
+    window.update();
+}
 */
 #pragma once
 #include "SDL.h"
