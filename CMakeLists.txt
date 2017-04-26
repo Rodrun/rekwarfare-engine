@@ -22,7 +22,7 @@ add_definitions("-std=c++11 -g -Wall -pedantic-errors")
 
 file(GLOB SRC "src/*.cpp")
 
-add_library(rekwarfare-engine STATIC ${SRC})
+add_library(rekwarfare-engine SHARED ${SRC})
 
 target_link_libraries(rekwarfare-engine
     ${SDL2_LIBRARIES}

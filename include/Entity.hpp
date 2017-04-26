@@ -1,20 +1,34 @@
 #pragma once
 
+#include "Texture.hpp"
+
+#include <memory>
+
 namespace rekwarfare {
 
 class Entity {
 public:
-    Entity(float x, float y, float w, float h, float r=0);
-    virtual ~Entity() { }
-    virtual void update() { }
-    virtual void render() const { }
+    /*
+    * Entity constructor.
+    * r: rotation.
+    */
+    Entity(double x, double y, double w, double h, double r=0);
+    virtual ~Entity() { };
+    virtual void update(double delta) { };
+    virtual void render() const { };
+    /*
+    * Check if entity intersects with another (quadrilateral).
+    */
     bool collides(Entity);
 
-    float x;
-    float y;
-    float w;
-    float h;
-    float rotation;
+    double x;
+    double y;
+    double w;
+    double h;
+    double rotation;
+
+protected:
+    std::shared_ptr<Texture> m_texture;
 
 };
 
