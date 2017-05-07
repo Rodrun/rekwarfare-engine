@@ -2,7 +2,7 @@
 
 namespace rekwarfare {
 
-Entity::Entity(float x, float y, float w, float h, float r) :
+Entity::Entity(double x, double y, double w, double h, double r) :
     x(x), y(y), w(w), h(h), rotation(r) { }
 
 bool Entity::collides(Entity e) {
